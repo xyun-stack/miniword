@@ -13,7 +13,10 @@ export type UploadRecord = {
   width: number;
   height: number;
   device: UploadDevice;
+  /** Browser-facing URL. With a private store this points at /api/media/[id]. */
   blobUrl: string;
+  /** Underlying private Vercel Blob pathname. Used server-side only. */
+  blobPathname: string;
   createdAt: number;
 };
 

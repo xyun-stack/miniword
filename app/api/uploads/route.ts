@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { put, list } from "@vercel/blob";
+import { put, list, get } from "@vercel/blob";
 import {
   type UploadRecord,
   type UploadDevice,
   toPublic
 } from "@/lib/upload-types";
 
-// Force the Node runtime — @vercel/blob needs it and we use crypto.subtle
-// + randomUUID which are both available in Node 20+.
 export const runtime = "nodejs";
 
 const MAX_BYTES = 200 * 1024;
@@ -17,7 +15,9 @@ const ALLOWED_EXT = /\.(png|jpe?g|gif)$/i;
 /**
  * POST /api/uploads
  * Multipart body: file, nickname, idHandle, pw, width, height, device.
- * Stores the file in Vercel Blob and a metadata JSON alongside it.
+ * Stores the media + metadata JSON in a *private* Vercel Blob store and
+ * returns a public record whose blobUrl points at /api/media/[id] — a
+ * server-side proxy that re-streams the private blob to the browser.
  */
 export async function POST(req: NextRequest) {
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
   try {
     const buf = Buffer.from(await file.arrayBuffer());
     const mediaBlob = await put(`media/${id}.${ext}`, buf, {
-      access: "public",
+      access: "private",
       contentType: file.type,
       addRandomSuffix: false
     });
@@ -87,12 +87,15 @@ export async function POST(req: NextRequest) {
       width: width || 240,
       height: height || 135,
       device,
-      blobUrl: mediaBlob.url,
+      // Browser-facing URL: proxy route that re-streams the private blob.
+      blobUrl: `/api/media/${id}`,
+      // Server-side reference to fetch the underlying blob later.
+      blobPathname: mediaBlob.pathname,
       createdAt: Date.now()
     };
 
     await put(`uploads/${id}.json`, JSON.stringify(record), {
-      access: "public",
+      access: "private",
       contentType: "application/json",
       addRandomSuffix: false
     });
@@ -106,8 +109,7 @@ export async function POST(req: NextRequest) {
 
 /**
  * GET /api/uploads
- * Query params: idHandle, q, device. Returns matching public records,
- * newest first.
+ * Lists matching uploads (newest first). Filters: idHandle, q, device.
  */
 export async function GET(req: NextRequest) {
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
@@ -124,9 +126,10 @@ export async function GET(req: NextRequest) {
     await Promise.all(
       blobs.map(async (b) => {
         try {
-          const res = await fetch(b.url, { cache: "no-store" });
-          if (!res.ok) return null;
-          return (await res.json()) as UploadRecord;
+          const result = await get(b.url, { access: "private" });
+          if (!result || result.statusCode !== 200) return null;
+          const text = await new Response(result.stream).text();
+          return JSON.parse(text) as UploadRecord;
         } catch {
           return null;
         }

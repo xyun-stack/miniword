@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { del, list } from "@vercel/blob";
+import { del, list, get } from "@vercel/blob";
 import { type UploadRecord, toPublic } from "@/lib/upload-types";
 
 export const runtime = "nodejs";
@@ -44,30 +44,35 @@ export async function DELETE(
     return NextResponse.json({ error: "Invalid credentials" }, { status: 403 });
   }
 
-  await Promise.all([del(record.blobUrl), del(metaUrlFor(id, record.blobUrl))]);
+  const metaUrl = await metaUrlFor(id);
+  const { blobs: mediaList } = await list({ prefix: record.blobPathname });
+  const mediaUrl = mediaList.find((b) => b.pathname === record.blobPathname)?.url;
+
+  await Promise.all([
+    mediaUrl ? del(mediaUrl) : Promise.resolve(),
+    metaUrl ? del(metaUrl) : Promise.resolve()
+  ]);
 
   return NextResponse.json({ ok: true });
 }
 
 async function loadRecord(id: string): Promise<UploadRecord | null> {
   const { blobs } = await list({ prefix: `uploads/${id}.json` });
-  const meta = blobs[0];
+  const meta = blobs.find((b) => b.pathname === `uploads/${id}.json`);
   if (!meta) return null;
   try {
-    const res = await fetch(meta.url, { cache: "no-store" });
-    if (!res.ok) return null;
-    return (await res.json()) as UploadRecord;
+    const result = await get(meta.url, { access: "private" });
+    if (!result || result.statusCode !== 200) return null;
+    const text = await new Response(result.stream).text();
+    return JSON.parse(text) as UploadRecord;
   } catch {
     return null;
   }
 }
 
-// Vercel Blob `del()` accepts a URL — the metadata blob's URL is derived
-// from the same root the media URL lives on, with a known prefix.
-function metaUrlFor(id: string, mediaUrl: string): string {
-  const root = new URL(mediaUrl);
-  root.pathname = `/uploads/${id}.json`;
-  return root.toString();
+async function metaUrlFor(id: string): Promise<string | null> {
+  const { blobs } = await list({ prefix: `uploads/${id}.json` });
+  return blobs.find((b) => b.pathname === `uploads/${id}.json`)?.url ?? null;
 }
 
 async function sha256Hex(input: string): Promise<string> {
