@@ -2,12 +2,14 @@ import Link from "next/link";
 import { Surface } from "@/components/glass/Surface";
 import { GifCard } from "@/components/GifCard";
 import { SearchBar } from "@/components/SearchBar";
+import { TagPills } from "@/components/TagPills";
 import { DEVICES, findDevice } from "@/lib/devices";
 import {
   SAMPLE_GIFS,
   SAMPLE_PACKS,
   CATEGORY_LABELS,
   tagsByCategory,
+  categoryOfTag,
   type Category,
   type Mood,
   type Motion
@@ -99,7 +101,12 @@ export default async function BrowsePage({
   const start = (safePage - 1) * PAGE_SIZE;
   const pageItems = sorted.slice(start, start + PAGE_SIZE);
 
-  const tagsForRow = tagsByCategory(activeCategory ?? null);
+  // Show the Tag row only when a category is active (explicit or implied
+  // by an active tag). Otherwise the row would dump all 50 tags into the
+  // surface, which is overwhelming.
+  const effectiveCategory: Category | null =
+    activeCategory ?? (activeTag ? categoryOfTag(activeTag) : null);
+  const tagsForRow = effectiveCategory ? tagsByCategory(effectiveCategory) : [];
 
   const buildHref = (
     next: Partial<{
@@ -211,25 +218,16 @@ export default async function BrowsePage({
             ))}
           </FilterRow>
 
-          <FilterRow label="Tag">
-            <Link
-              href={buildHref({ tag: "", page: 1 })}
-              className="pill"
-              data-active={!activeTag}
-            >
-              Any
-            </Link>
-            {tagsForRow.map((t) => (
-              <Link
-                key={t}
-                href={buildHref({ tag: t, page: 1 })}
-                className="pill"
-                data-active={activeTag === t}
-              >
-                #{t}
-              </Link>
-            ))}
-          </FilterRow>
+          {effectiveCategory && (
+            <FilterRow label="Tag">
+              <TagPills
+                activeTag={activeTag}
+                tags={tagsForRow}
+                anyHref={buildHref({ tag: "", page: 1 })}
+                tagHref={(t) => buildHref({ tag: t, page: 1 })}
+              />
+            </FilterRow>
+          )}
 
           <FilterRow label="Device">
             <Link

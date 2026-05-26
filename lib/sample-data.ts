@@ -134,6 +134,11 @@ export function tagsByCategory(category: Category | null): string[] {
   return ALL_TAGS.filter((t) => CATEGORY_OF_TAG[t] === category);
 }
 
+/** Look up the category a tag belongs to. */
+export function categoryOfTag(tag: string): Category | null {
+  return CATEGORY_OF_TAG[tag] ?? null;
+}
+
 export type PackItem = {
   id: string;
   slug: string;
