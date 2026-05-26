@@ -4,38 +4,87 @@ import Link from "next/link";
 import { useState } from "react";
 import { Surface } from "@/components/glass/Surface";
 import { DEVICES } from "@/lib/devices";
+import {
+  useMyUploads,
+  readFileAsDataURL,
+  readImageDimensions,
+  classifyDevice
+} from "@/hooks/useMyUploads";
 
-type Status = "idle" | "submitting" | "done";
+type Status = "idle" | "submitting" | "done" | "error";
 
 export default function UploadPage() {
+  const { add } = useMyUploads();
   const [nickname, setNickname] = useState("");
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<Status>("idle");
+  const [errorMsg, setErrorMsg] = useState<string>("");
 
-  const credsFilled = nickname.trim().length >= 2 && id.trim().length >= 2 && pw.trim().length >= 4;
+  const credsFilled =
+    nickname.trim().length >= 2 && id.trim().length >= 2 && pw.trim().length >= 4;
   const ready = credsFilled && file !== null && status !== "submitting";
 
   function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0] ?? null;
     setFile(f);
+    if (status === "error") setStatus("idle");
   }
 
   function onDrop(e: React.DragEvent<HTMLLabelElement>) {
     e.preventDefault();
     const f = e.dataTransfer.files?.[0];
     if (f) setFile(f);
+    if (status === "error") setStatus("idle");
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!ready) return;
+    if (!ready || !file) return;
     setStatus("submitting");
-    // No backend yet — placeholder for a future POST /api/upload that hashes
-    // pw client-side and submits as multipart with the file.
-    await new Promise((r) => setTimeout(r, 700));
-    setStatus("done");
+    setErrorMsg("");
+
+    try {
+      if (file.size > 4 * 1024 * 1024) {
+        throw new Error("File too large for local storage (max 4 MB without a server).");
+      }
+
+      const dataURL = await readFileAsDataURL(file);
+      let { width, height } = await readImageDimensions(dataURL);
+      if (!width || !height) {
+        // Video files won't load via <img>. Default to landscape and let
+        // the user trust the classifier; we can wire a <video> probe later.
+        width = 240;
+        height = 135;
+      }
+
+      const nick = nickname.trim().startsWith("@")
+        ? nickname.trim()
+        : `@${nickname.trim()}`;
+
+      add({
+        id:
+          typeof crypto !== "undefined" && "randomUUID" in crypto
+            ? crypto.randomUUID()
+            : `u_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+        nickname: nick,
+        idHandle: id.trim(),
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type,
+        width,
+        height,
+        device: classifyDevice(width, height),
+        dataURL,
+        createdAt: Date.now()
+      });
+
+      setStatus("done");
+    } catch (err) {
+      setStatus("error");
+      setErrorMsg(err instanceof Error ? err.message : "Upload failed.");
+    }
   }
 
   function reset() {
@@ -43,6 +92,7 @@ export default function UploadPage() {
     setId("");
     setPw("");
     setFile(null);
+    setErrorMsg("");
     setStatus("idle");
   }
 
@@ -51,24 +101,28 @@ export default function UploadPage() {
       <div className="mx-auto max-w-2xl space-y-8 pt-6 text-center">
         <p className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[color:var(--color-pink-deep)]">
           <span aria-hidden className="pink-dot" />
-          Submitted
+          Saved
         </p>
         <h1
           className="text-[clamp(2rem,4vw,2.6rem)] font-semibold tracking-[-0.02em]"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          Thanks, <span style={{ color: "var(--color-pink-mid)" }}>{nickname || "anon"}</span>.
+          Thanks,{" "}
+          <span style={{ color: "var(--color-pink-mid)" }}>
+            {nickname.startsWith("@") ? nickname : `@${nickname || "anon"}`}
+          </span>.
         </h1>
         <p className="mx-auto max-w-md text-[14px] text-[color:var(--color-ink-muted)]">
-          Your motion is in the queue. We'll resize it for every supported device and publish once it clears review.
+          Saved to your device. Visit <span className="font-medium text-[color:var(--color-ink)]">Uploaded</span>{" "}
+          to see and manage your motions. No server yet, so they live in this browser only.
         </p>
         <div className="flex justify-center gap-3 pt-4">
-          <button onClick={reset} className="btn-primary">
+          <Link href="/uploaded" className="btn-primary">
+            View uploads
+          </Link>
+          <button onClick={reset} className="btn-secondary">
             Upload another
           </button>
-          <Link href="/" className="btn-secondary">
-            Back home
-          </Link>
         </div>
       </div>
     );
@@ -201,6 +255,11 @@ export default function UploadPage() {
         {credsFilled && !file && (
           <p className="text-[11.5px] text-[color:var(--color-ink-muted)]">
             Choose a file to enable Upload.
+          </p>
+        )}
+        {status === "error" && (
+          <p className="text-[11.5px]" style={{ color: "var(--color-pink-deep)" }}>
+            {errorMsg}
           </p>
         )}
       </div>

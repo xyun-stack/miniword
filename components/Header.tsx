@@ -20,6 +20,9 @@ export function Header() {
           <Link href="/browse?pack=kissaten" className="link-underline">
             Packs
           </Link>
+          <Link href="/uploaded" className="link-underline">
+            Uploaded
+          </Link>
           <Link href="/upload" className="link-underline">
             Upload
           </Link>
