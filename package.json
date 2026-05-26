@@ -10,7 +10,8 @@
     "lint": "next lint",
     "crawl": "node scripts/crawl.mjs",
     "process-xpad": "node scripts/process-xpad.mjs",
-    "randomize-authors": "node scripts/randomize-authors.mjs"
+    "randomize-authors": "node scripts/randomize-authors.mjs",
+    "english-titles": "node scripts/english-titles.mjs"
   },
   "dependencies": {
     "next": "^15.1.0",
