@@ -3,6 +3,7 @@ import { Surface } from "@/components/glass/Surface";
 import { GifCard } from "@/components/GifCard";
 import { SearchBar } from "@/components/SearchBar";
 import { TagPills } from "@/components/TagPills";
+import { UploadedMatches } from "@/components/UploadedMatches";
 import { DEVICES, findDevice } from "@/lib/devices";
 import {
   SAMPLE_GIFS,
@@ -298,6 +299,8 @@ export default async function BrowsePage({
           )}
         </div>
       </Surface>
+
+      <UploadedMatches device={deviceParam} q={q} />
 
       {sorted.length === 0 ? (
         <Surface className="px-6 py-16 text-center">
