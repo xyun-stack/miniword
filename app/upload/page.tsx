@@ -282,11 +282,16 @@ export default function UploadPage() {
         </div>
       </div>
 
-      <div className="pt-2 text-center text-[12px] text-[color:var(--color-ink-muted)]">
+      <div className="pt-2 text-center text-[12px] leading-relaxed text-[color:var(--color-ink-muted)]">
         <p>
           Choose <span className="font-medium text-[color:var(--color-ink)]">CC0</span> or{" "}
           <span className="font-medium text-[color:var(--color-ink)]">CC-BY</span> at publish
           time. Only upload content you own or have the right to share.
+        </p>
+        <p className="mt-2">
+          Uploads that violate our guidelines — copyright infringement, NSFW material,
+          or otherwise harmful content — may be removed by moderators at any time
+          without notice.
         </p>
         <Link href="/" className="link-underline mt-4 inline-block">
           Back

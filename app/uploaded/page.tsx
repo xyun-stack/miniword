@@ -43,11 +43,17 @@ export default function UploadedPage() {
         </div>
       )}
 
-      <p className="mx-auto max-w-md text-center text-[11.5px] leading-relaxed text-[color:var(--color-ink-muted)]">
-        Uploads are saved to your device only. They don't sync across browsers or
-        appear in other people's libraries until we add a server. Clear your
-        browser data and they're gone.
-      </p>
+      <div className="mx-auto max-w-md space-y-2 text-center text-[11.5px] leading-relaxed text-[color:var(--color-ink-muted)]">
+        <p>
+          Uploads are saved to your device only. They don't sync across browsers or
+          appear in other people's libraries until we add a server. Clear your
+          browser data and they're gone.
+        </p>
+        <p>
+          Once shared publicly, content that violates our guidelines may be
+          removed by moderators at any time without notice.
+        </p>
+      </div>
     </div>
   );
 }
