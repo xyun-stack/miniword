@@ -72,8 +72,7 @@ export function LocaleSwitch() {
           className="absolute right-0 top-full z-50 mt-2 w-44 overflow-hidden rounded-[14px] border"
           style={{
             background: "var(--color-bg)",
-            borderColor: "var(--color-line-strong)",
-            boxShadow: "0 12px 32px rgba(0, 0, 0, 0.08)"
+            borderColor: "var(--color-line-strong)"
           }}
         >
           {LOCALES.map((code) => {

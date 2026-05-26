@@ -120,20 +120,17 @@ button:focus-visible {
     font-weight: 600;
     letter-spacing: 0.005em;
     border: 1px solid var(--color-pink-mid);
-    box-shadow: 0 6px 18px rgba(255, 133, 168, 0.30);
     transition:
       transform   var(--duration-fast) var(--ease-premium),
       background  var(--duration-fast) var(--ease-premium),
-      border-color var(--duration-fast) var(--ease-premium),
-      box-shadow  var(--duration-fast) var(--ease-premium);
+      border-color var(--duration-fast) var(--ease-premium);
     cursor: pointer;
     white-space: nowrap;
   }
   .btn-primary:hover {
     background: var(--color-pink-mid);
-    border-color: var(--color-pink-deep);
-    box-shadow: 0 10px 24px rgba(255, 133, 168, 0.42);
-    transform: translateY(-2px);
+    border-color: var(--color-pink-mid);
+    transform: translateY(-1px);
   }
   .btn-primary:active {
     transform: translateY(0);
@@ -197,11 +194,10 @@ button:focus-visible {
     color: var(--color-ink);
     background: var(--color-pink);
     border: 1px solid var(--color-pink-mid);
-    box-shadow: 0 4px 14px rgba(255, 133, 168, 0.28);
   }
   .pill[data-active="true"]:hover {
     background: var(--color-pink-mid);
-    border-color: var(--color-pink-deep);
+    border-color: var(--color-pink-mid);
   }
 
   /* ─── Stamp (Pick badge) ─── */

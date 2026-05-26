@@ -369,7 +369,6 @@ function SortToggleItem({
       style={{
         background: active ? "var(--color-pink)" : "transparent",
         color: active ? "var(--color-ink)" : "var(--color-ink-muted)",
-        boxShadow: active ? "0 4px 14px rgba(255, 133, 168, 0.28)" : "none",
         border: active ? "1px solid var(--color-pink-mid)" : "1px solid transparent",
         fontWeight: active ? 600 : 500
       }}
