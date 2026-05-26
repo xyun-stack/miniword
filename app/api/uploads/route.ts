@@ -59,38 +59,44 @@ export async function POST(req: NextRequest) {
   const id = crypto.randomUUID();
   const ext = (file.type.split("/")[1] ?? "gif").toLowerCase();
 
-  const mediaBlob = await put(`media/${id}.${ext}`, file, {
-    access: "public",
-    contentType: file.type,
-    addRandomSuffix: false
-  });
+  try {
+    const buf = Buffer.from(await file.arrayBuffer());
+    const mediaBlob = await put(`media/${id}.${ext}`, buf, {
+      access: "public",
+      contentType: file.type,
+      addRandomSuffix: false
+    });
 
-  const pwSalt = crypto.randomUUID();
-  const pwHash = await sha256Hex(pw + pwSalt);
+    const pwSalt = crypto.randomUUID();
+    const pwHash = await sha256Hex(pw + pwSalt);
 
-  const record: UploadRecord = {
-    id,
-    nickname: nickname.startsWith("@") ? nickname : `@${nickname}`,
-    idHandle,
-    pwHash,
-    pwSalt,
-    fileName: file.name,
-    fileSize: file.size,
-    fileType: file.type,
-    width: width || 240,
-    height: height || 135,
-    device,
-    blobUrl: mediaBlob.url,
-    createdAt: Date.now()
-  };
+    const record: UploadRecord = {
+      id,
+      nickname: nickname.startsWith("@") ? nickname : `@${nickname}`,
+      idHandle,
+      pwHash,
+      pwSalt,
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type,
+      width: width || 240,
+      height: height || 135,
+      device,
+      blobUrl: mediaBlob.url,
+      createdAt: Date.now()
+    };
 
-  await put(`uploads/${id}.json`, JSON.stringify(record), {
-    access: "public",
-    contentType: "application/json",
-    addRandomSuffix: false
-  });
+    await put(`uploads/${id}.json`, JSON.stringify(record), {
+      access: "public",
+      contentType: "application/json",
+      addRandomSuffix: false
+    });
 
-  return NextResponse.json(toPublic(record), { status: 201 });
+    return NextResponse.json(toPublic(record), { status: 201 });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Storage write failed";
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
 }
 
 /**
