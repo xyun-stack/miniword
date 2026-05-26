@@ -18,12 +18,15 @@
   --color-line:        rgba(0, 0, 0, 0.05);
   --color-line-strong: rgba(0, 0, 0, 0.10);
 
-  /* ───── Edge accent (Pantone 510 C) ───── */
-  --color-pink:      #EBBECB;
-  --color-pink-soft: #F5D2DD;
-  --color-pink-wash: #FBE9EF;
-  --color-pink-mid:  #C97C92;
-  --color-pink-deep: #8E4359;
+  /* ───── Pink scale — brighter, paler, more playful ─────
+   *  Used for: primary buttons, active pills, accent text, eyebrows.
+   *  Light enough to layer black text on top with full contrast.
+   */
+  --color-pink:        #FFC0D2;   /* main fill — bright bubblegum */
+  --color-pink-soft:   #FFD6E0;   /* hover / softer wash */
+  --color-pink-wash:   #FFEFF4;   /* near-white tint, for stamps + wash */
+  --color-pink-mid:    #FF85A8;   /* mid saturation for icons + borders */
+  --color-pink-deep:   #D14E7E;   /* deep for accent text */
 
   /* ───── Geometry ───── */
   --radius-sm: 10px;
@@ -110,21 +113,26 @@ button:focus-visible {
     gap: 6px;
     padding: 12px 22px;
     border-radius: 999px;
-    background: var(--color-ink);
-    color: var(--color-bg);
+    background: var(--color-pink);
+    color: var(--color-ink);
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 0.005em;
-    border: 0;
+    border: 1px solid var(--color-pink-mid);
+    box-shadow: 0 6px 18px rgba(255, 133, 168, 0.30);
     transition:
       transform   var(--duration-fast) var(--ease-premium),
-      background  var(--duration-fast) var(--ease-premium);
+      background  var(--duration-fast) var(--ease-premium),
+      border-color var(--duration-fast) var(--ease-premium),
+      box-shadow  var(--duration-fast) var(--ease-premium);
     cursor: pointer;
     white-space: nowrap;
   }
   .btn-primary:hover {
-    background: var(--color-ink-soft);
-    transform: translateY(-1px);
+    background: var(--color-pink-mid);
+    border-color: var(--color-pink-deep);
+    box-shadow: 0 10px 24px rgba(255, 133, 168, 0.42);
+    transform: translateY(-2px);
   }
   .btn-primary:active {
     transform: translateY(0);
@@ -185,11 +193,14 @@ button:focus-visible {
     background: var(--color-bg-raised);
   }
   .pill[data-active="true"] {
-    color: var(--color-bg);
-    background: var(--color-ink);
+    color: var(--color-ink);
+    background: var(--color-pink);
+    border: 1px solid var(--color-pink-mid);
+    box-shadow: 0 4px 14px rgba(255, 133, 168, 0.28);
   }
   .pill[data-active="true"]:hover {
-    background: var(--color-ink-soft);
+    background: var(--color-pink-mid);
+    border-color: var(--color-pink-deep);
   }
 
   /* ─── Stamp (Pick badge) ─── */

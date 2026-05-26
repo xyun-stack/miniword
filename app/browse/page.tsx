@@ -367,8 +367,11 @@ function SortToggleItem({
       aria-selected={active}
       className="inline-flex h-8 items-center rounded-full px-4 text-[12.5px] font-medium transition-colors duration-200 ease-out"
       style={{
-        background: active ? "var(--color-ink)" : "transparent",
-        color: active ? "var(--color-bg)" : "var(--color-ink-muted)"
+        background: active ? "var(--color-pink)" : "transparent",
+        color: active ? "var(--color-ink)" : "var(--color-ink-muted)",
+        boxShadow: active ? "0 4px 14px rgba(255, 133, 168, 0.28)" : "none",
+        border: active ? "1px solid var(--color-pink-mid)" : "1px solid transparent",
+        fontWeight: active ? 600 : 500
       }}
     >
       {label}
