@@ -6,7 +6,17 @@ import { UploadCard } from "@/components/UploadCard";
 import { useMyUploads } from "@/hooks/useMyUploads";
 
 export default function UploadedPage() {
-  const { items } = useMyUploads();
+  const { items, remove } = useMyUploads();
+
+  async function handleRemove(id: string) {
+    const pw = window.prompt("Password to remove this upload");
+    if (!pw) return;
+    try {
+      await remove(id, pw);
+    } catch (err) {
+      window.alert(err instanceof Error ? err.message : "Delete failed");
+    }
+  }
 
   return (
     <div className="space-y-10">
@@ -22,7 +32,7 @@ export default function UploadedPage() {
           Your uploads.
         </h1>
         <p className="mt-2 text-[13px] text-[color:var(--color-ink-muted)]">
-          {items.length} saved · this device only
+          {items.length} saved · matched by your local ID
         </p>
       </div>
 
@@ -38,20 +48,24 @@ export default function UploadedPage() {
       ) : (
         <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6">
           {items.map((u) => (
-            <UploadCard key={u.id} upload={u} />
+            <UploadCard
+              key={u.id}
+              upload={u}
+              onRemove={() => handleRemove(u.id)}
+            />
           ))}
         </div>
       )}
 
       <div className="mx-auto max-w-md space-y-2 text-center text-[11.5px] leading-relaxed text-[color:var(--color-ink-muted)]">
         <p>
-          Uploads are stored on the miniword server. Showing entries that match the
-          ID you used on this device. Use the same ID on any device to find your
-          uploads again.
+          Uploads are stored on the miniword server. Showing entries that match
+          the ID you used on this device. Use the same ID on any device to find
+          your uploads again.
         </p>
         <p>
-          Content that violates our guidelines may be removed by moderators at any
-          time without notice.
+          Content that violates our guidelines may be removed by moderators at
+          any time without notice.
         </p>
       </div>
     </div>

@@ -3,7 +3,10 @@ import { Surface } from "@/components/glass/Surface";
 import { GifCard } from "@/components/GifCard";
 import { SearchBar } from "@/components/SearchBar";
 import { TagPills } from "@/components/TagPills";
-import { UploadedMatches } from "@/components/UploadedMatches";
+import { UploadCard } from "@/components/UploadCard";
+import { listUploadsServer } from "@/lib/uploads-server";
+import type { PublicUpload } from "@/lib/upload-types";
+import type { GifItem } from "@/lib/sample-data";
 import { DEVICES, findDevice } from "@/lib/devices";
 import {
   SAMPLE_GIFS,
@@ -92,15 +95,35 @@ export default async function BrowsePage({
     return true;
   });
 
-  const sorted =
+  const sortedGifs =
     activeSort === "popular"
       ? [...filtered].sort((a, b) => a.rank - b.rank)
       : filtered;
 
-  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  // Fetch matching uploads server-side. They live at the head of the result
+  // list (newest first) so user submissions appear inline with the curated
+  // crawl, not in a separate surface.
+  // Tag / mood / motion / category filters don't apply to uploads (they
+  // don't carry that taxonomy), so we only forward device + q.
+  const uploads: PublicUpload[] =
+    activeMood || activeMotion || activeCategory || activeTag || activePack
+      ? []
+      : await listUploadsServer({ device: deviceFilterId, q });
+
+  type Result =
+    | { kind: "upload"; upload: PublicUpload }
+    | { kind: "gif"; gif: GifItem };
+
+  const combined: Result[] = [
+    ...uploads.map((u): Result => ({ kind: "upload", upload: u })),
+    ...sortedGifs.map((g): Result => ({ kind: "gif", gif: g }))
+  ];
+
+  const totalPages = Math.max(1, Math.ceil(combined.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
   const start = (safePage - 1) * PAGE_SIZE;
-  const pageItems = sorted.slice(start, start + PAGE_SIZE);
+  const pageItems = combined.slice(start, start + PAGE_SIZE);
+  const totalResults = combined.length;
 
   // Show the Tag row only when a category is active (explicit or implied
   // by an active tag). Otherwise the row would dump all 50 tags into the
@@ -169,7 +192,7 @@ export default async function BrowsePage({
             : device.label}
         </h1>
         <p className="mt-2 text-[13px] text-[color:var(--color-ink-muted)]">
-          {sorted.length} results
+          {totalResults} results
           {!isAllDevices ? ` · ${device.width} × ${device.height}` : ""}
           {totalPages > 1 ? ` · page ${safePage} of ${totalPages}` : ""}
         </p>
@@ -300,9 +323,7 @@ export default async function BrowsePage({
         </div>
       </Surface>
 
-      <UploadedMatches device={deviceParam} q={q} />
-
-      {sorted.length === 0 ? (
+      {totalResults === 0 ? (
         <Surface className="px-6 py-16 text-center">
           <p className="text-[14px] text-[color:var(--color-ink-muted)]">
             Nothing matches yet.
@@ -314,9 +335,13 @@ export default async function BrowsePage({
       ) : (
         <>
           <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6">
-            {pageItems.map((g, i) => (
-              <GifCard key={g.id} gif={g} priority={i < 6} />
-            ))}
+            {pageItems.map((item, i) =>
+              item.kind === "upload" ? (
+                <UploadCard key={`u-${item.upload.id}`} upload={item.upload} />
+              ) : (
+                <GifCard key={item.gif.id} gif={item.gif} priority={i < 6} />
+              )
+            )}
           </div>
 
           {totalPages > 1 && (

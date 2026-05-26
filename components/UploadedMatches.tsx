@@ -58,7 +58,7 @@ export function UploadedMatches({ device, q }: Props) {
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6">
         {items.map((u) => (
-          <UploadCard key={u.id} upload={u} showRemove={false} />
+          <UploadCard key={u.id} upload={u} />
         ))}
       </div>
     </Surface>

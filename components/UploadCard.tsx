@@ -1,28 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { useMyUploads, type Upload } from "@/hooks/useMyUploads";
+import type { Upload } from "@/hooks/useMyUploads";
+import type { PublicUpload } from "@/lib/upload-types";
 import { findDevice } from "@/lib/devices";
 
 type Props = {
-  upload: Upload;
-  showRemove?: boolean;
+  upload: Upload | PublicUpload;
+  /** Pass a remove handler to show the × button (typically only on /uploaded). */
+  onRemove?: () => void | Promise<void>;
 };
 
-export function UploadCard({ upload, showRemove = true }: Props) {
-  const { remove } = useMyUploads();
+/**
+ * UploadCard — display-only card for any uploaded image. Hook-free so it
+ * can be rendered inside a server component grid (e.g. /browse).
+ * The optional onRemove prop wires the delete button from a parent that
+ * holds the credential state (e.g. /uploaded page).
+ */
+export function UploadCard({ upload, onRemove }: Props) {
   const device = findDevice(upload.device);
 
-  async function handleRemove(e: React.MouseEvent) {
+  function handleRemove(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    const pw = window.prompt("Password to remove this upload");
-    if (!pw) return;
-    try {
-      await remove(upload.id, pw);
-    } catch (err) {
-      window.alert(err instanceof Error ? err.message : "Delete failed");
-    }
+    if (onRemove) void onRemove();
   }
 
   return (
@@ -45,14 +46,22 @@ export function UploadCard({ upload, showRemove = true }: Props) {
             />
           </div>
 
-          {showRemove && (
+          {onRemove && (
             <button
               type="button"
               onClick={handleRemove}
               aria-label="Remove upload"
               className="absolute right-2 top-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/90 text-[color:var(--color-ink-muted)] transition-colors hover:text-[color:var(--color-ink)]"
             >
-              <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round">
+              <svg
+                width={11}
+                height={11}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2.2}
+                strokeLinecap="round"
+              >
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
