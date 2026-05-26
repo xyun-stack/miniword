@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { useState } from "react";
 
+type TagItem = { tag: string; href: string };
+
 type Props = {
   activeTag?: string;
-  tags: string[];
+  tags: TagItem[];
   anyHref: string;
-  tagHref: (tag: string) => string;
 };
 
 const COLLAPSED_LIMIT = 10;
@@ -17,7 +18,7 @@ const COLLAPSED_LIMIT = 10;
  * tucks the rest behind a "+N more" button so a long category like
  * Anime doesn't dominate the filter surface.
  */
-export function TagPills({ activeTag, tags, anyHref, tagHref }: Props) {
+export function TagPills({ activeTag, tags, anyHref }: Props) {
   const [expanded, setExpanded] = useState(false);
   const overflow = tags.length > COLLAPSED_LIMIT;
   const visible =
@@ -30,14 +31,13 @@ export function TagPills({ activeTag, tags, anyHref, tagHref }: Props) {
     overflow &&
     !expanded &&
     activeTag !== undefined &&
-    !visible.includes(activeTag);
+    !visible.some((t) => t.tag === activeTag);
   if (activeHidden) {
     return (
       <ExpandedView
         activeTag={activeTag}
         tags={tags}
         anyHref={anyHref}
-        tagHref={tagHref}
         onCollapse={() => setExpanded(false)}
         canCollapse={false}
       />
@@ -51,12 +51,12 @@ export function TagPills({ activeTag, tags, anyHref, tagHref }: Props) {
       </Link>
       {visible.map((t) => (
         <Link
-          key={t}
-          href={tagHref(t)}
+          key={t.tag}
+          href={t.href}
           className="pill"
-          data-active={activeTag === t}
+          data-active={activeTag === t.tag}
         >
-          #{t}
+          #{t.tag}
         </Link>
       ))}
       {overflow && !expanded && (
@@ -87,7 +87,6 @@ function ExpandedView({
   activeTag,
   tags,
   anyHref,
-  tagHref,
   onCollapse,
   canCollapse
 }: Props & { onCollapse: () => void; canCollapse: boolean }) {
@@ -98,12 +97,12 @@ function ExpandedView({
       </Link>
       {tags.map((t) => (
         <Link
-          key={t}
-          href={tagHref(t)}
+          key={t.tag}
+          href={t.href}
           className="pill"
-          data-active={activeTag === t}
+          data-active={activeTag === t.tag}
         >
-          #{t}
+          #{t.tag}
         </Link>
       ))}
       {canCollapse && (

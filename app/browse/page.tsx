@@ -247,9 +247,11 @@ export default async function BrowsePage({
             <FilterRow label="Tag">
               <TagPills
                 activeTag={activeTag}
-                tags={tagsForRow}
+                tags={tagsForRow.map((t) => ({
+                  tag: t,
+                  href: buildHref({ tag: t, page: 1 })
+                }))}
                 anyHref={buildHref({ tag: "", page: 1 })}
-                tagHref={(t) => buildHref({ tag: t, page: 1 })}
               />
             </FilterRow>
           )}
