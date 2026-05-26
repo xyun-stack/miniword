@@ -3,80 +3,42 @@ import { Surface } from "@/components/glass/Surface";
 import { GifCard } from "@/components/GifCard";
 import { DeviceFrame } from "@/components/DeviceFrame";
 import { RecentUploads } from "@/components/RecentUploads";
-import { DEVICES } from "@/lib/devices";
-import { SAMPLE_GIFS, gifsByDevice, type GifItem } from "@/lib/sample-data";
+import { SAMPLE_GIFS, gifsByDevice } from "@/lib/sample-data";
 import { t } from "@/lib/i18n";
 import { getLocale } from "@/lib/locale-server";
 
-// Preview tag picks per device. streamdock-32 has no native GIFs in our
-// crawl (the classifier only assigns xpad-mini or streamdock-15), so we
-// borrow a square GIF that reads well at small icon sizes.
-// xpad-mini and streamdock-15 favour bishōjo (female character) GIFs.
-const PREVIEW_TAGS: Record<string, string[]> = {
-  "xpad-mini": ["chibi", "magicalgirl", "kawaii", "yourname", "miku"],
-  "streamdock-15": ["chibi", "kawaii", "miku", "vocaloid"],
-  "streamdock-32": ["pixel", "kawaii", "pokemon", "mario"]
-};
-
-function devicePreview(deviceId: string): GifItem | undefined {
-  const lookupDevice = deviceId === "streamdock-32" ? "streamdock-15" : deviceId;
-  const tags = PREVIEW_TAGS[deviceId] ?? [];
-  for (const tag of tags) {
-    const found = SAMPLE_GIFS.find(
-      (g) => g.romaji === tag && g.device === lookupDevice
-    );
-    if (found) return found;
-  }
-  return SAMPLE_GIFS.find((g) => g.device === lookupDevice);
-}
-
 const FEATURED_COUNT = 5;
-const ROW_A_COUNT = 18;
-const ROW_B_COUNT = 24;
+const ROW_A_COUNT = 24;
 
 export default async function DiscoverPage() {
   const locale = await getLocale();
-  // Hero anchors: three chibi picks — one landscape for the centre device,
-  // two square for the flanking devices. Falls back through related tags
-  // so the hero stays populated even if a re-crawl drops some items.
-  const chibiLandscape = SAMPLE_GIFS.filter(
-    (g) => g.romaji === "chibi" && g.device === "xpad-mini"
-  );
-  const chibiSquare = SAMPLE_GIFS.filter(
-    (g) => g.romaji === "chibi" && g.device === "streamdock-15"
-  );
-  const kawaiiSquare = SAMPLE_GIFS.filter(
-    (g) => g.romaji === "kawaii" && g.device === "streamdock-15"
-  );
+  // Three chibi picks for the hero. All items are projected to xpad-mini
+  // device after the pivot, so the lookups no longer split by aspect.
+  const chibiItems = SAMPLE_GIFS.filter((g) => g.romaji === "chibi");
+  const explicitHero =
+    SAMPLE_GIFS.find((g) => g.slug === "chibi-15241833") ?? null;
+
   const heroMini =
-    chibiLandscape[0] ??
-    SAMPLE_GIFS.find((g) => g.romaji === "kawaii" && g.device === "xpad-mini") ??
-    SAMPLE_GIFS.find((g) => g.device === "xpad-mini") ??
+    chibiItems[0] ??
+    SAMPLE_GIFS.find((g) => g.romaji === "kawaii") ??
     SAMPLE_GIFS[0];
   const heroSquare =
-    chibiSquare[0] ??
-    kawaiiSquare[0] ??
-    SAMPLE_GIFS.find((g) => g.device === "streamdock-15") ??
+    chibiItems.find((g) => g.id !== heroMini.id) ??
+    SAMPLE_GIFS.find((g) => g.romaji === "kawaii") ??
     SAMPLE_GIFS[1];
   const heroSquare2 =
-    SAMPLE_GIFS.find((g) => g.slug === "chibi-15241833") ??
-    chibiSquare[1] ??
-    kawaiiSquare[0] ??
-    SAMPLE_GIFS.find(
-      (g) => g.device === "streamdock-15" && g.id !== heroSquare.id
-    ) ??
+    explicitHero ??
+    chibiItems.find((g) => g.id !== heroMini.id && g.id !== heroSquare.id) ??
+    SAMPLE_GIFS.find((g) => g.id !== heroMini.id && g.id !== heroSquare.id) ??
     SAMPLE_GIFS[2];
 
   // Featured: bishōjo / female-character picks, all xpad-mini (landscape)
   // so the row reads as a single uniform widescreen grid.
   const FEATURED_TAGS = ["magicalgirl", "yourname", "mononoke", "spirited", "lain"];
   const featured = FEATURED_TAGS
-    .map((tag) =>
-      SAMPLE_GIFS.find((g) => g.romaji === tag && g.device === "xpad-mini")
-    )
+    .map((tag) => SAMPLE_GIFS.find((g) => g.romaji === tag))
     .filter((g): g is (typeof SAMPLE_GIFS)[number] => Boolean(g));
   const xpadRow = gifsByDevice("xpad-mini").slice(0, ROW_A_COUNT);
-  const squareRow = gifsByDevice("streamdock-15").slice(0, ROW_B_COUNT);
 
   return (
     <div className="space-y-28 pb-12">
@@ -153,47 +115,6 @@ export default async function DiscoverPage() {
         </div>
       </section>
 
-      {/* ─────────────── DEVICES ─────────────── */}
-      <section>
-        <SectionTitle
-          eyebrow={t(locale, "section.designed.eyebrow")}
-          title={t(locale, "section.designed.title")}
-        />
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          {DEVICES.map((d) => {
-            const sample = devicePreview(d.id);
-            const isLandscape = d.width > d.height;
-            return (
-              <Link key={d.id} href={`/browse?device=${d.id}`} className="group">
-                <Surface variant="strong" className="overflow-hidden p-0 card-hover">
-                  <div
-                    className="flex items-center justify-center p-8"
-                    style={{ minHeight: 180 }}
-                  >
-                    <div style={{ width: isLandscape ? 160 : 96 }}>
-                      <DeviceFrame
-                        deviceId={d.id}
-                        src={sample?.gif_url}
-                        fallbackPattern={sample?.fallbackPattern}
-                        alt={d.label}
-                      />
-                    </div>
-                  </div>
-                  <div className="px-5 pb-5 pt-1 text-center">
-                    <p className="text-[15px] font-medium tracking-tight">
-                      {d.label}
-                    </p>
-                    <p className="mt-0.5 text-[12px] text-[color:var(--color-ink-muted)]">
-                      {d.width} × {d.height}
-                    </p>
-                  </div>
-                </Surface>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
-
       {/* ─────────────── XPAD-MINI ROW ─────────────── */}
       <section>
         <SectionTitle
@@ -204,22 +125,6 @@ export default async function DiscoverPage() {
         />
         <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
           {xpadRow.map((g) => (
-            <GifCard key={g.id} gif={g} />
-          ))}
-        </div>
-      </section>
-
-
-      {/* ─────────────── STREAMDOCK ROW ─────────────── */}
-      <section>
-        <SectionTitle
-          eyebrow={t(locale, "section.sd.eyebrow")}
-          title={t(locale, "section.sd.title")}
-          tail={t(locale, "section.xpad.tail")}
-          tailHref="/browse?device=streamdock-15"
-        />
-        <div className="mt-8 grid grid-cols-3 gap-x-4 gap-y-7 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
-          {squareRow.map((g) => (
             <GifCard key={g.id} gif={g} />
           ))}
         </div>

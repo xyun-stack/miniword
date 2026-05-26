@@ -116,7 +116,28 @@ export type GifItem = RawSeed & {
 
 const rawItems = (seeds as { items: RawSeed[] }).items ?? [];
 
-export const SAMPLE_GIFS: GifItem[] = rawItems.map((item) => ({
+// Representative streamdock-15 slugs that pre-date the xpad-mini-only
+// pivot. Kept (and re-classified as xpad-mini for display) so the home
+// hero remains intact.
+const REPRESENTATIVE_NON_XPAD = new Set<string>(["chibi-15241833"]);
+{
+  const topChibiSquare = rawItems
+    .filter((r) => r.romaji === "chibi" && r.device === "streamdock-15")
+    .sort((a, b) => a.rank - b.rank)
+    .slice(0, 3);
+  for (const r of topChibiSquare) REPRESENTATIVE_NON_XPAD.add(r.slug);
+}
+
+const xpadAndReps: RawSeed[] = rawItems
+  .filter(
+    (item) =>
+      item.device === "xpad-mini" || REPRESENTATIVE_NON_XPAD.has(item.slug)
+  )
+  // Project all surviving items into the single xpad-mini device so the
+  // grid and the hero render with a consistent 240×135 aspect.
+  .map((item) => ({ ...item, device: "xpad-mini" }));
+
+export const SAMPLE_GIFS: GifItem[] = xpadAndReps.map((item) => ({
   ...item,
   palette: MOOD_PALETTE[item.mood] ?? MOOD_PALETTE.mono,
   fallbackPattern: FALLBACK_PATTERN[item.mood] ?? "motion-paper",
