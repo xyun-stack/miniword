@@ -4,6 +4,8 @@ import { GifCard } from "@/components/GifCard";
 import { DeviceFrame } from "@/components/DeviceFrame";
 import { DEVICES } from "@/lib/devices";
 import { SAMPLE_GIFS, gifsByDevice, type GifItem } from "@/lib/sample-data";
+import { t } from "@/lib/i18n";
+import { getLocale } from "@/lib/locale-server";
 
 // Preview tag picks per device. streamdock-32 has no native GIFs in our
 // crawl (the classifier only assigns xpad-mini or streamdock-15), so we
@@ -31,7 +33,8 @@ const FEATURED_COUNT = 5;
 const ROW_A_COUNT = 18;
 const ROW_B_COUNT = 24;
 
-export default function DiscoverPage() {
+export default async function DiscoverPage() {
+  const locale = await getLocale();
   // Hero anchors: three chibi picks — one landscape for the centre device,
   // two square for the flanking devices. Falls back through related tags
   // so the hero stays populated even if a re-crawl drops some items.
@@ -82,13 +85,15 @@ export default function DiscoverPage() {
           className="mx-auto max-w-3xl text-balance text-[clamp(2.8rem,8vw,6rem)] font-semibold leading-[1.02] tracking-[-0.025em]"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          Motion, made to{" "}
-          <span style={{ color: "var(--color-pink-mid)" }}>fit.</span>
+          {t(locale, "hero.title.pre")}
+          <span style={{ color: "var(--color-pink-mid)" }}>
+            {t(locale, "hero.title.accent")}
+          </span>
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-balance text-[17px] leading-relaxed text-[color:var(--color-ink-muted)]">
-          A motion library for LCD keypads.
+          {t(locale, "hero.subtitle.1")}
           <br className="hidden md:inline" />
-          Sized to fit. Ready to drop in.
+          {t(locale, "hero.subtitle.2")}
         </p>
 
         {/* Hero showcase — landscape xpad-mini centered, squares flanking */}
@@ -131,7 +136,12 @@ export default function DiscoverPage() {
 
       {/* ─────────────── FEATURED ─────────────── */}
       <section>
-        <SectionTitle eyebrow="Featured" title="This week's picks." tail="View all" tailHref="/browse" />
+        <SectionTitle
+          eyebrow={t(locale, "section.featured.eyebrow")}
+          title={t(locale, "section.featured.title")}
+          tail={t(locale, "section.featured.tail")}
+          tailHref="/browse"
+        />
         <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 md:grid-cols-5">
           {featured.map((g, i) => (
             <GifCard key={g.id} gif={g} priority={i < 4} showStamp={i < 2} size="md" />
@@ -141,7 +151,10 @@ export default function DiscoverPage() {
 
       {/* ─────────────── DEVICES ─────────────── */}
       <section>
-        <SectionTitle eyebrow="Designed for" title="One library. Every device." />
+        <SectionTitle
+          eyebrow={t(locale, "section.designed.eyebrow")}
+          title={t(locale, "section.designed.title")}
+        />
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
           {DEVICES.map((d) => {
             const sample = devicePreview(d.id);
@@ -180,9 +193,9 @@ export default function DiscoverPage() {
       {/* ─────────────── XPAD-MINI ROW ─────────────── */}
       <section>
         <SectionTitle
-          eyebrow="xpad mini"
-          title="Landscape motion."
-          tail="See all"
+          eyebrow={t(locale, "section.xpad.eyebrow")}
+          title={t(locale, "section.xpad.title")}
+          tail={t(locale, "section.xpad.tail")}
           tailHref="/browse?device=xpad-mini"
         />
         <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -196,9 +209,9 @@ export default function DiscoverPage() {
       {/* ─────────────── STREAMDOCK ROW ─────────────── */}
       <section>
         <SectionTitle
-          eyebrow="StreamDock"
-          title="Square motion."
-          tail="See all"
+          eyebrow={t(locale, "section.sd.eyebrow")}
+          title={t(locale, "section.sd.title")}
+          tail={t(locale, "section.xpad.tail")}
           tailHref="/browse?device=streamdock-15"
         />
         <div className="mt-8 grid grid-cols-3 gap-x-4 gap-y-7 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
@@ -214,18 +227,17 @@ export default function DiscoverPage() {
           className="text-[clamp(1.8rem,4vw,2.6rem)] font-semibold tracking-[-0.02em]"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          {SAMPLE_GIFS.length}+ motions, ready to drop in.
+          {t(locale, "cta.title")}
         </h2>
         <p className="mx-auto mt-3 max-w-md text-[14px] text-[color:var(--color-ink-muted)]">
-          Filter by device, mood, motion. Or upload your own. Sized for every
-          supported keypad.
+          {t(locale, "cta.subtitle")}
         </p>
         <div className="mt-7 flex items-center justify-center gap-3">
           <Link href="/browse" className="btn-primary">
-            Browse all
+            {t(locale, "cta.browse")}
           </Link>
           <Link href="/upload" className="btn-secondary">
-            Upload yours
+            {t(locale, "cta.upload")}
           </Link>
         </div>
       </section>
