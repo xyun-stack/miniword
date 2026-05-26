@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Surface } from "@/components/glass/Surface";
 import { GifCard } from "@/components/GifCard";
+import { SearchBar } from "@/components/SearchBar";
 import { DEVICES, findDevice } from "@/lib/devices";
 import {
   SAMPLE_GIFS,
@@ -23,6 +24,7 @@ type SearchParams = Promise<{
   pack?: string;
   sort?: SortKey;
   page?: string;
+  q?: string;
 }>;
 
 const PAGE_SIZE = 90;
@@ -68,6 +70,9 @@ export default async function BrowsePage({
     ? SAMPLE_PACKS.find((p) => p.slug === params.pack)
     : null;
 
+  const q = (params.q ?? "").trim();
+  const qNeedle = q.toLowerCase().replace(/^@/, "");
+
   const page = Math.max(1, parseInt(params.page || "1", 10) || 1);
 
   const filtered = SAMPLE_GIFS.filter((g) => {
@@ -77,6 +82,10 @@ export default async function BrowsePage({
     if (activeCategory && g.category !== activeCategory) return false;
     if (activeTag && g.romaji !== activeTag) return false;
     if (activePack && !activePack.gifIds.includes(g.id)) return false;
+    if (qNeedle) {
+      const hay = `${g.title} ${g.romaji} ${g.author}`.toLowerCase();
+      if (!hay.includes(qNeedle)) return false;
+    }
     return true;
   });
 
@@ -102,6 +111,7 @@ export default async function BrowsePage({
       pack: string | "";
       sort: SortKey | "";
       page: number;
+      q: string | "";
     }>
   ) => {
     const sp = new URLSearchParams();
@@ -113,6 +123,7 @@ export default async function BrowsePage({
     const pk = next.pack ?? params.pack;
     const so = next.sort ?? (activeSort === "curated" ? "" : activeSort);
     const pg = next.page ?? safePage;
+    const qq = next.q ?? q;
     if (d) sp.set("device", d);
     if (m) sp.set("mood", m);
     if (mv) sp.set("motion", mv);
@@ -121,6 +132,7 @@ export default async function BrowsePage({
     if (pk) sp.set("pack", pk);
     if (so) sp.set("sort", so);
     if (pg && pg !== 1) sp.set("page", String(pg));
+    if (qq) sp.set("q", qq);
     const qs = sp.toString();
     return qs ? `/browse?${qs}` : "/browse";
   };
@@ -136,7 +148,9 @@ export default async function BrowsePage({
           className="mt-2 text-[clamp(2rem,4vw,2.8rem)] font-semibold tracking-[-0.02em]"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          {activePack
+          {q
+            ? `"${q}"`
+            : activePack
             ? activePack.title
             : activeTag
             ? `#${activeTag}`
@@ -152,6 +166,20 @@ export default async function BrowsePage({
           {totalPages > 1 ? ` · page ${safePage} of ${totalPages}` : ""}
         </p>
       </div>
+
+      <SearchBar
+        q={q}
+        clearHref={buildHref({ q: "", page: 1 })}
+        preserveParams={{
+          device: params.device,
+          mood: activeMood,
+          motion: activeMotion,
+          category: activeCategory,
+          tag: activeTag,
+          pack: params.pack,
+          sort: activeSort === "curated" ? undefined : activeSort
+        }}
+      />
 
       <div className="flex items-center justify-center">
         <SortToggle
