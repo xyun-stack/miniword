@@ -15,9 +15,6 @@ export async function Header() {
         </Link>
 
         <nav className="hidden items-center gap-7 text-[13px] text-[color:var(--color-ink-muted)] md:flex">
-          <Link href="/" className="link-underline">
-            {t(locale, "nav.discover")}
-          </Link>
           <Link href="/browse" className="link-underline">
             {t(locale, "nav.browse")}
           </Link>

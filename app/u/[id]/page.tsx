@@ -153,25 +153,6 @@ export default function UploadDetailPage({ params }: Props) {
             </p>
           </div>
 
-          <div>
-            <p className="text-[10.5px] uppercase tracking-[0.16em] text-[color:var(--color-ink-muted)]">
-              Palette
-            </p>
-            <div className="mt-2 flex gap-2">
-              {tone.palette.map((c, i) => (
-                <div key={`${c}-${i}`} className="flex flex-col items-center gap-1">
-                  <span
-                    className="block h-6 w-6 rounded-md"
-                    style={{ background: c }}
-                  />
-                  <span className="font-mono text-[9.5px] tracking-tight text-[color:var(--color-ink-muted)]">
-                    {c.replace("#", "")}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
           <Surface className="grid grid-cols-2 gap-3 px-4 py-3 text-[12px]">
             <Meta k="Mood" v={tone.mood} />
             <Meta k="Motion" v={tone.motion} />
@@ -188,9 +169,6 @@ export default function UploadDetailPage({ params }: Props) {
               className="btn-primary block w-full"
             >
               Download .{ext}
-            </a>
-            <a href="#" className="btn-secondary block w-full">
-              StreamDock .iconPack
             </a>
             <a href="#" className="btn-secondary block w-full">
               xpad-mini .mp4
