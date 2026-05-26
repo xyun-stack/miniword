@@ -175,13 +175,13 @@ function packFromTags(
 }
 
 export const SAMPLE_PACKS: PackItem[] = [
-  packFromTags("p_01", "tokyo-after-rain", "Tokyo, after rain", "비 갠 도쿄의 단어들", "@kaito", [
+  packFromTags("p_01", "tokyo-after-rain", "Tokyo, after rain", "Frames from a wet city.", "@kaito", [
     "neon",
     "rain",
     "tokyo",
     "cyber"
   ]),
-  packFromTags("p_02", "kissaten", "kissaten", "오래된 다방의 색감", "@yuna", [
+  packFromTags("p_02", "kissaten", "kissaten", "Colors of an old café.", "@yuna", [
     "lofi",
     "ramen",
     "tea",
@@ -192,12 +192,12 @@ export const SAMPLE_PACKS: PackItem[] = [
     "moon",
     "geometric"
   ]),
-  packFromTags("p_04", "petit-bloom", "petit bloom", "꽃, 짧게", "@yuna", [
+  packFromTags("p_04", "petit-bloom", "petit bloom", "Flowers, briefly.", "@yuna", [
     "sakura",
     "bloom",
     "cat"
   ]),
-  packFromTags("p_05", "synth-dreams", "synth dreams", "신스 · 베이퍼 · 픽셀", "@neuro", [
+  packFromTags("p_05", "synth-dreams", "synth dreams", "Synth · Vapor · Pixel.", "@neuro", [
     "synthwave",
     "vaporwave",
     "pixel",

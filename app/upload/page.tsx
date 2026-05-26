@@ -10,11 +10,14 @@ import {
   readImageDimensions,
   classifyDevice
 } from "@/hooks/useMyUploads";
+import { useLocale } from "@/hooks/useLocale";
+import { t } from "@/lib/i18n";
 
 type Status = "idle" | "submitting" | "done" | "error";
 
 export default function UploadPage() {
   const { add } = useMyUploads();
+  const { locale } = useLocale();
   const [nickname, setNickname] = useState("");
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
@@ -48,12 +51,14 @@ export default function UploadPage() {
     try {
       const MAX_BYTES = 200 * 1024; // 200 KB
       if (file.size > MAX_BYTES) {
-        throw new Error(
-          `파일이 너무 큽니다. 최대 200 KB. (선택한 파일: ${(file.size / 1024).toFixed(1)} KB)`
+        const msg = t(locale, "upload.error.fileTooLarge").replace(
+          "{size}",
+          (file.size / 1024).toFixed(1)
         );
+        throw new Error(msg);
       }
       if (!/^image\/(png|jpeg|gif)$/i.test(file.type)) {
-        throw new Error("지원 형식: JPG · PNG · GIF.");
+        throw new Error(t(locale, "upload.error.unsupported"));
       }
 
       const dataURL = await readFileAsDataURL(file);
@@ -148,9 +153,12 @@ export default function UploadPage() {
           Add a motion.
         </h1>
         <p className="mx-auto mt-3 max-w-md text-[14px] leading-relaxed text-[color:var(--color-ink-muted)]">
-          파일 종류: <span className="font-medium text-[color:var(--color-ink)]">JPG · PNG · GIF</span>
+          {t(locale, "upload.spec.types")}{" "}
+          <span className="font-medium text-[color:var(--color-ink)]">JPG · PNG · GIF</span>
           <br />
-          추천: <span className="font-medium text-[color:var(--color-ink)]">240 × 135 px</span> · 최대{" "}
+          {t(locale, "upload.spec.recommended")}{" "}
+          <span className="font-medium text-[color:var(--color-ink)]">240 × 135 px</span> ·{" "}
+          {t(locale, "upload.spec.max")}{" "}
           <span className="font-medium text-[color:var(--color-ink)]">200 KB</span>
         </p>
       </div>
@@ -231,7 +239,7 @@ export default function UploadPage() {
                         : "var(--color-ink-muted)"
                   }}
                 >
-                  {(file.size / 1024).toFixed(1)} KB · 클릭해서 교체
+                  {(file.size / 1024).toFixed(1)} KB · {t(locale, "upload.dropzone.replace")}
                 </p>
               </>
             ) : (
@@ -240,7 +248,7 @@ export default function UploadPage() {
                   Drop a file, or click to browse.
                 </p>
                 <p className="mt-1 text-[12px] text-[color:var(--color-ink-muted)]">
-                  JPG · PNG · GIF · 권장 240 × 135 px · 최대 200 KB
+                  {t(locale, "upload.dropzone.formats")}
                 </p>
               </>
             )}

@@ -52,7 +52,28 @@ const TRANSLATIONS: Record<string, Record<Locale, string>> = {
   "btn.upload": { en: "Upload", ko: "올리기", ja: "投稿" },
 
   // Device card meta
-  "device.preview.size": { en: "Preview size", ko: "프리뷰 사이즈", ja: "プレビューサイズ" }
+  "device.preview.size": { en: "Preview size", ko: "프리뷰 사이즈", ja: "プレビューサイズ" },
+
+  // Upload spec strings (formerly hard-coded Korean)
+  "upload.spec.types":           { en: "File types:",   ko: "파일 종류:",   ja: "ファイル形式:" },
+  "upload.spec.recommended":     { en: "Recommended:",  ko: "추천:",        ja: "推奨:" },
+  "upload.spec.max":             { en: "max",           ko: "최대",         ja: "最大" },
+  "upload.dropzone.formats":     {
+    en: "JPG · PNG · GIF · recommended 240 × 135 px · max 200 KB",
+    ko: "JPG · PNG · GIF · 권장 240 × 135 px · 최대 200 KB",
+    ja: "JPG · PNG · GIF · 推奨 240 × 135 px · 最大 200 KB"
+  },
+  "upload.dropzone.replace":     { en: "click to replace", ko: "클릭해서 교체", ja: "クリックで差し替え" },
+  "upload.error.fileTooLarge": {
+    en: "File too large. Max 200 KB. (Selected: {size} KB)",
+    ko: "파일이 너무 큽니다. 최대 200 KB. (선택한 파일: {size} KB)",
+    ja: "ファイルが大きすぎます。最大 200 KB。（選択: {size} KB）"
+  },
+  "upload.error.unsupported": {
+    en: "Supported formats: JPG · PNG · GIF.",
+    ko: "지원 형식: JPG · PNG · GIF.",
+    ja: "対応形式: JPG · PNG · GIF。"
+  }
 };
 
 export function t(locale: Locale, key: string): string {
