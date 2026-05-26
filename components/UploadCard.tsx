@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMyUploads, type Upload } from "@/hooks/useMyUploads";
 import { findDevice } from "@/lib/devices";
 
@@ -25,10 +26,8 @@ export function UploadCard({ upload, showRemove = true }: Props) {
   }
 
   return (
-    <a
-      href={upload.blobUrl}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      href={`/u/${upload.id}`}
       className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-pink-mid)] focus-visible:ring-offset-2 rounded-[16px]"
       aria-label={`${upload.nickname} · ${upload.fileName}`}
     >
@@ -72,6 +71,6 @@ export function UploadCard({ upload, showRemove = true }: Props) {
           </div>
         </div>
       </article>
-    </a>
+    </Link>
   );
 }
