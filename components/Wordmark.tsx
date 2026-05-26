@@ -1,7 +1,6 @@
 /**
- * The miniword wordmark. A small Pantone 510 C dot lives between
- * "mini" and "word". Quiet, intentional, the only place the brand
- * colour appears in the mark itself.
+ * The miniworld wordmark. A small pink dot lives between "mini" and
+ * "world" as the only visual accent in the mark itself.
  */
 export function Wordmark({ className = "" }: { className?: string }) {
   return (
@@ -11,7 +10,7 @@ export function Wordmark({ className = "" }: { className?: string }) {
     >
       <span>mini</span>
       <span aria-hidden className="pink-dot translate-y-[-1px]" />
-      <span>word</span>
+      <span>world</span>
     </span>
   );
 }

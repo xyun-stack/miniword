@@ -5,14 +5,14 @@ import { Header } from "@/components/Header";
 
 export const metadata: Metadata = {
   title: {
-    default: "miniword. Motion for LCD keypads.",
-    template: "%s · miniword"
+    default: "miniworld. Motion for LCD keypads.",
+    template: "%s · miniworld"
   },
   description:
     "A motion library for LCD keypads. Sized for every key.",
-  metadataBase: new URL("https://miniword.gg"),
+  metadataBase: new URL("https://miniword-taupe.vercel.app"),
   openGraph: {
-    title: "miniword",
+    title: "miniworld",
     description: "Motion, made to fit.",
     type: "website"
   }

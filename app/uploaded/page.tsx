@@ -59,7 +59,7 @@ export default function UploadedPage() {
 
       <div className="mx-auto max-w-md space-y-2 text-center text-[11.5px] leading-relaxed text-[color:var(--color-ink-muted)]">
         <p>
-          Uploads are stored on the miniword server. Showing entries that match
+          Uploads are stored on the miniworld server. Showing entries that match
           the ID you used on this device. Use the same ID on any device to find
           your uploads again.
         </p>
