@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Surface } from "@/components/glass/Surface";
 import { GifCard } from "@/components/GifCard";
 import { DeviceFrame } from "@/components/DeviceFrame";
+import { RecentUploads } from "@/components/RecentUploads";
 import { DEVICES } from "@/lib/devices";
 import { SAMPLE_GIFS, gifsByDevice, type GifItem } from "@/lib/sample-data";
 import { t } from "@/lib/i18n";
@@ -133,6 +134,9 @@ export default async function DiscoverPage() {
           </div>
         </div>
       </section>
+
+      {/* ─────────────── COMMUNITY UPLOADS ─────────────── */}
+      <RecentUploads limit={12} />
 
       {/* ─────────────── FEATURED ─────────────── */}
       <section>
