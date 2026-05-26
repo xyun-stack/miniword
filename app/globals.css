@@ -18,15 +18,16 @@
   --color-line:        rgba(0, 0, 0, 0.05);
   --color-line-strong: rgba(0, 0, 0, 0.10);
 
-  /* ───── Pink scale — brighter, paler, more playful ─────
-   *  Used for: primary buttons, active pills, accent text, eyebrows.
-   *  Light enough to layer black text on top with full contrast.
+  /* ───── Pink scale ─────
+   *  Fills (button backgrounds, active pills) stay bright + playful.
+   *  Text usages (eyebrows, hero accent, badge labels) use the dusty
+   *  -deep tone so type never feels candy-bright.
    */
   --color-pink:        #FFC0D2;   /* main fill — bright bubblegum */
   --color-pink-soft:   #FFD6E0;   /* hover / softer wash */
   --color-pink-wash:   #FFEFF4;   /* near-white tint, for stamps + wash */
-  --color-pink-mid:    #FF85A8;   /* mid saturation for icons + borders */
-  --color-pink-deep:   #D14E7E;   /* deep for accent text */
+  --color-pink-mid:    #FF85A8;   /* icons, hairline borders, link underlines */
+  --color-pink-deep:   #9C617E;   /* TEXT — dusty muted, never bright */
 
   /* ───── Geometry ───── */
   --radius-sm: 10px;
