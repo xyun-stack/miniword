@@ -3,6 +3,9 @@ import { AdminLibraryTable } from "@/components/admin/AdminLibraryTable";
 import { SAMPLE_GIFS } from "@/lib/sample-data";
 import { getRemovedIds } from "@/lib/removed-server";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function AdminLibraryPage() {
   const removed = await getRemovedIds();
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { del, list, get } from "@vercel/blob";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import type { UploadRecord } from "@/lib/upload-types";
@@ -51,6 +52,12 @@ export async function DELETE(
     mediaUrl ? del(mediaUrl) : Promise.resolve(),
     del(meta.url)
   ]);
+
+  revalidatePath("/");
+  revalidatePath("/browse");
+  revalidatePath("/uploaded");
+  revalidatePath("/admin");
+  revalidatePath("/admin/uploads");
 
   return NextResponse.json({ ok: true });
 }

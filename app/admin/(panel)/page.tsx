@@ -3,6 +3,11 @@ import { SAMPLE_GIFS } from "@/lib/sample-data";
 import { getRemovedIds } from "@/lib/removed-server";
 import { listUploadsServer } from "@/lib/uploads-server";
 
+// Always fetch fresh — admin views must reflect any concurrent
+// upload/delete from another tab or user.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function AdminDashboardPage() {
   const [removed, uploads] = await Promise.all([
     getRemovedIds(),

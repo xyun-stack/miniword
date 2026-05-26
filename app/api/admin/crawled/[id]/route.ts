@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { addRemovedId, clearRemovedId } from "@/lib/removed-server";
 
 export const runtime = "nodejs";
+
+/** Invalidate every route that reads getActiveGifs() / getRemovedIds(). */
+function bustPublicCaches() {
+  revalidatePath("/");
+  revalidatePath("/browse");
+  revalidatePath("/admin");
+  revalidatePath("/admin/library");
+}
 
 /**
  * DELETE /api/admin/crawled/[id]
@@ -21,6 +30,7 @@ export async function DELETE(
   const { id } = await params;
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
   await addRemovedId(id);
+  bustPublicCaches();
   return NextResponse.json({ ok: true });
 }
 
@@ -43,5 +53,6 @@ export async function POST(
   const { id } = await params;
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
   await clearRemovedId(id);
+  bustPublicCaches();
   return NextResponse.json({ ok: true });
 }

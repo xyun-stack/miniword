@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { put, list, get } from "@vercel/blob";
 import {
   type UploadRecord,
@@ -99,6 +100,12 @@ export async function POST(req: NextRequest) {
       contentType: "application/json",
       addRandomSuffix: false
     });
+
+    revalidatePath("/");
+    revalidatePath("/browse");
+    revalidatePath("/uploaded");
+    revalidatePath("/admin");
+    revalidatePath("/admin/uploads");
 
     return NextResponse.json(toPublic(record), { status: 201 });
   } catch (err) {
