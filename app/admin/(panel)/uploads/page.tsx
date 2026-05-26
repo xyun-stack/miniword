@@ -2,6 +2,9 @@ import { Surface } from "@/components/glass/Surface";
 import { AdminUploadsTable } from "@/components/admin/AdminUploadsTable";
 import { listUploadsServer } from "@/lib/uploads-server";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function AdminUploadsPage() {
   const uploads = await listUploadsServer({ device: null, q: null });
 
