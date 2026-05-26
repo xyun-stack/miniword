@@ -105,7 +105,7 @@ export default function UploadPage() {
   if (status === "done") {
     return (
       <div className="mx-auto max-w-2xl space-y-8 pt-6 text-center">
-        <p className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[color:var(--color-pink-deep)]">
+        <p className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[color:var(--color-ink-muted)]">
           <span aria-hidden className="pink-dot" />
           Saved
         </p>
@@ -114,7 +114,7 @@ export default function UploadPage() {
           style={{ fontFamily: "var(--font-display)" }}
         >
           Thanks,{" "}
-          <span style={{ color: "var(--color-pink-mid)" }}>
+          <span style={{ color: "var(--color-ink-muted)" }}>
             {nickname.startsWith("@") ? nickname : `@${nickname || "anon"}`}
           </span>.
         </h1>
@@ -137,7 +137,7 @@ export default function UploadPage() {
   return (
     <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-10 pt-6">
       <div className="text-center">
-        <p className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[color:var(--color-pink-deep)]">
+        <p className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[color:var(--color-ink-muted)]">
           <span aria-hidden className="pink-dot" />
           Upload
         </p>
@@ -204,15 +204,15 @@ export default function UploadPage() {
           onDragOver={(e) => e.preventDefault()}
         >
           <div
-            className="flex min-h-[260px] flex-col items-center justify-center rounded-[18px] border-2 border-dashed px-6 py-12 text-center transition-colors hover:border-[color:var(--color-pink-mid)]"
-            style={{ borderColor: file ? "var(--color-pink-mid)" : "var(--color-line)" }}
+            className="flex min-h-[260px] flex-col items-center justify-center rounded-[18px] border-2 border-dashed px-6 py-12 text-center transition-colors hover:border-[color:var(--color-line-strong)]"
+            style={{ borderColor: file ? "var(--color-ink)" : "var(--color-line)" }}
           >
             <div
               className="mb-5 flex h-14 w-14 items-center justify-center rounded-full text-[26px] font-light"
               style={{
-                background: "var(--color-pink-wash)",
-                color: "var(--color-pink-deep)",
-                border: "1px solid var(--color-pink-soft)"
+                background: "var(--color-pink)",
+                color: "var(--color-ink)",
+                border: "0"
               }}
             >
               {file ? "✓" : "+"}
@@ -227,7 +227,7 @@ export default function UploadPage() {
                   style={{
                     color:
                       file.size > 200 * 1024
-                        ? "var(--color-pink-deep)"
+                        ? "var(--color-ink)"
                         : "var(--color-ink-muted)"
                   }}
                 >
@@ -275,7 +275,7 @@ export default function UploadPage() {
           </p>
         )}
         {status === "error" && (
-          <p className="text-[11.5px]" style={{ color: "var(--color-pink-deep)" }}>
+          <p className="text-[11.5px]" style={{ color: "var(--color-ink)" }}>
             {errorMsg}
           </p>
         )}

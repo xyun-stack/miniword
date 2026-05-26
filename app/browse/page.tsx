@@ -147,7 +147,7 @@ export default async function BrowsePage({
   return (
     <div className="space-y-10">
       <div className="text-center">
-        <p className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[color:var(--color-pink-deep)]">
+        <p className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[color:var(--color-ink-muted)]">
           <span aria-hidden className="pink-dot" />
           Browse
         </p>
@@ -369,7 +369,7 @@ function SortToggleItem({
       style={{
         background: active ? "var(--color-pink)" : "transparent",
         color: active ? "var(--color-ink)" : "var(--color-ink-muted)",
-        border: active ? "1px solid var(--color-pink-mid)" : "1px solid transparent",
+        border: "1px solid transparent",
         fontWeight: active ? 600 : 500
       }}
     >

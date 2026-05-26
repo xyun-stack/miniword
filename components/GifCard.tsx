@@ -19,7 +19,7 @@ export function GifCard({ gif, priority = false, showStamp = false, size = "sm" 
   return (
     <Link
       href={`/gif/${gif.slug}`}
-      className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-pink-mid)] focus-visible:ring-offset-2 rounded-[16px]"
+      className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-ink)] focus-visible:ring-offset-2 rounded-[16px]"
       aria-label={`${gif.title} by ${gif.author}`}
     >
       <article>

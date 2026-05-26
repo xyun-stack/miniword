@@ -86,7 +86,7 @@ export default async function DiscoverPage() {
           style={{ fontFamily: "var(--font-display)" }}
         >
           {t(locale, "hero.title.pre")}
-          <span style={{ color: "var(--color-pink-deep)" }}>
+          <span style={{ color: "var(--color-ink-muted)" }}>
             {t(locale, "hero.title.accent")}
           </span>
         </h1>
@@ -259,7 +259,7 @@ function SectionTitle({
   return (
     <div className="flex items-end justify-between pb-2">
       <div>
-        <p className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[color:var(--color-pink-deep)]">
+        <p className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[color:var(--color-ink-muted)]">
           <span aria-hidden className="pink-dot" />
           {eyebrow}
         </p>

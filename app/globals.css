@@ -18,16 +18,17 @@
   --color-line:        rgba(0, 0, 0, 0.05);
   --color-line-strong: rgba(0, 0, 0, 0.10);
 
-  /* ───── Pink scale ─────
-   *  Fills (button backgrounds, active pills) stay bright + playful.
-   *  Text usages (eyebrows, hero accent, badge labels) use the dusty
-   *  -deep tone so type never feels candy-bright.
+  /* ───── Pink — single tone (#FFEDF1) ─────
+   *  Fill-only role: button backgrounds, active pills, stamps. Never
+   *  used on text or thin strokes (it disappears on white). Pink-deep
+   *  is kept as an alias of the same hex; text accents now fall back
+   *  to ink-muted in the components themselves.
    */
-  --color-pink:        #FFC0D2;   /* main fill — bright bubblegum */
-  --color-pink-soft:   #FFD6E0;   /* hover / softer wash */
-  --color-pink-wash:   #FFEFF4;   /* near-white tint, for stamps + wash */
-  --color-pink-mid:    #FF85A8;   /* icons, hairline borders, link underlines */
-  --color-pink-deep:   #9C617E;   /* TEXT — dusty muted, never bright */
+  --color-pink:        #FFEDF1;
+  --color-pink-soft:   #FFEDF1;
+  --color-pink-wash:   #FFEDF1;
+  --color-pink-mid:    #FFEDF1;
+  --color-pink-deep:   #FFEDF1;
 
   /* ───── Geometry ───── */
   --radius-sm: 10px;
@@ -75,7 +76,7 @@ body {
 
 a:focus-visible,
 button:focus-visible {
-  outline: 2px solid var(--color-pink-mid);
+  outline: 2px solid var(--color-ink);
   outline-offset: 3px;
   border-radius: 8px;
 }
@@ -119,22 +120,16 @@ button:focus-visible {
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.005em;
-    border: 1px solid var(--color-pink-mid);
-    transition:
-      transform   var(--duration-fast) var(--ease-premium),
-      background  var(--duration-fast) var(--ease-premium),
-      border-color var(--duration-fast) var(--ease-premium);
+    border: 0;
+    transition: background var(--duration-fast) var(--ease-premium);
     cursor: pointer;
     white-space: nowrap;
   }
   .btn-primary:hover {
-    background: var(--color-pink-mid);
-    border-color: var(--color-pink-mid);
-    transform: translateY(-1px);
+    background: #FCE3EA;
   }
   .btn-primary:active {
-    transform: translateY(0);
-    transition-duration: 80ms;
+    background: #F8D7E0;
   }
 
   .btn-secondary {
@@ -193,11 +188,10 @@ button:focus-visible {
   .pill[data-active="true"] {
     color: var(--color-ink);
     background: var(--color-pink);
-    border: 1px solid var(--color-pink-mid);
+    border: 0;
   }
   .pill[data-active="true"]:hover {
-    background: var(--color-pink-mid);
-    border-color: var(--color-pink-mid);
+    background: #FCE3EA;
   }
 
   /* ─── Stamp (Pick badge) ─── */
@@ -208,8 +202,8 @@ button:focus-visible {
     gap: 5px;
     padding: 3px 9px;
     border-radius: 999px;
-    background: var(--color-pink-wash);
-    color: var(--color-pink-deep);
+    background: var(--color-pink);
+    color: var(--color-ink);
     border: 0;
     font-size: 10px;
     letter-spacing: 0.06em;
@@ -248,7 +242,7 @@ button:focus-visible {
     bottom: -2px;
     height: 1.5px;
     width: 0;
-    background: var(--color-pink-mid);
+    background: var(--color-ink);
     border-radius: 999px;
     transition: width 360ms var(--ease-premium);
   }
@@ -263,7 +257,7 @@ button:focus-visible {
     width: 6px;
     height: 6px;
     border-radius: 999px;
-    background: var(--color-pink-mid);
+    background: var(--color-ink-faint);
   }
 
   /* ─── Eyebrow label ─── */
@@ -275,11 +269,8 @@ button:focus-visible {
     font-size: 11px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--color-pink-deep);
-    font-weight: 600;
-  }
-  .eyebrow.muted {
     color: var(--color-ink-muted);
+    font-weight: 600;
   }
 
   /* ─── Reveal on scroll (kept; motion only, no light) ─── */
