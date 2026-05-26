@@ -1,28 +1,21 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { AdminLogoutButton } from "@/components/admin/AdminLogoutButton";
 
-export default async function AdminLayout({
+/**
+ * Layout for the authenticated admin panel. The login page lives outside
+ * this route group, so it never inherits this gate — sidestepping the
+ * earlier redirect loop where the layout could not detect the login path
+ * from request headers.
+ */
+export default async function AdminPanelLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
-  const h = await headers();
-  const path = h.get("x-invoke-path") || h.get("next-url") || "";
-
-  // Don't gate /admin/login itself — that page needs to render unauthenticated.
-  const isLoginRoute = path.includes("/admin/login");
-
-  if (!isLoginRoute) {
-    const ok = await isAdminAuthenticated();
-    if (!ok) redirect("/admin/login");
-  }
-
-  if (isLoginRoute) {
-    return <>{children}</>;
-  }
+  const ok = await isAdminAuthenticated();
+  if (!ok) redirect("/admin/login");
 
   return (
     <div className="space-y-8">
