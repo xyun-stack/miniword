@@ -5,11 +5,11 @@ import { SearchBar } from "@/components/SearchBar";
 import { TagPills } from "@/components/TagPills";
 import { UploadCard } from "@/components/UploadCard";
 import { listUploadsServer } from "@/lib/uploads-server";
+import { getActiveGifs } from "@/lib/gifs-server";
 import type { PublicUpload } from "@/lib/upload-types";
 import type { GifItem } from "@/lib/sample-data";
 import { DEVICES, findDevice } from "@/lib/devices";
 import {
-  SAMPLE_GIFS,
   SAMPLE_PACKS,
   CATEGORY_LABELS,
   tagsByCategory,
@@ -81,7 +81,8 @@ export default async function BrowsePage({
 
   const page = Math.max(1, parseInt(params.page || "1", 10) || 1);
 
-  const filtered = SAMPLE_GIFS.filter((g) => {
+  const activeGifs = await getActiveGifs();
+  const filtered = activeGifs.filter((g) => {
     if (deviceFilterId && g.device !== deviceFilterId) return false;
     if (activeMood && g.mood !== activeMood) return false;
     if (activeMotion && g.motion !== activeMotion) return false;

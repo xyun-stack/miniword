@@ -3,13 +3,13 @@ import { notFound } from "next/navigation";
 import { Surface } from "@/components/glass/Surface";
 import { DeviceFrame } from "@/components/DeviceFrame";
 import { findDevice } from "@/lib/devices";
-import { findGif } from "@/lib/sample-data";
+import { findActiveGif } from "@/lib/gifs-server";
 
 type Params = Promise<{ slug: string }>;
 
 export default async function GifDetailPage({ params }: { params: Params }) {
   const { slug } = await params;
-  const gif = findGif(slug);
+  const gif = await findActiveGif(slug);
   if (!gif) notFound();
 
   const device = findDevice(gif.device);

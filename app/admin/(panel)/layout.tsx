@@ -38,6 +38,9 @@ export default async function AdminPanelLayout({
             <Link href="/admin/uploads" className="link-underline">
               Uploads
             </Link>
+            <Link href="/admin/library" className="link-underline">
+              Library
+            </Link>
             <Link href="/" className="link-underline">
               ↗ Site
             </Link>

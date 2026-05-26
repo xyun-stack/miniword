@@ -3,7 +3,7 @@ import { Surface } from "@/components/glass/Surface";
 import { GifCard } from "@/components/GifCard";
 import { DeviceFrame } from "@/components/DeviceFrame";
 import { RecentUploads } from "@/components/RecentUploads";
-import { SAMPLE_GIFS, gifsByDevice } from "@/lib/sample-data";
+import { getActiveGifs } from "@/lib/gifs-server";
 import { t } from "@/lib/i18n";
 import { getLocale } from "@/lib/locale-server";
 
@@ -12,33 +12,35 @@ const ROW_A_COUNT = 24;
 
 export default async function DiscoverPage() {
   const locale = await getLocale();
+  const activeGifs = await getActiveGifs();
+
   // Three chibi picks for the hero. All items are projected to xpad-mini
   // device after the pivot, so the lookups no longer split by aspect.
-  const chibiItems = SAMPLE_GIFS.filter((g) => g.romaji === "chibi");
+  const chibiItems = activeGifs.filter((g) => g.romaji === "chibi");
   const explicitHero =
-    SAMPLE_GIFS.find((g) => g.slug === "chibi-15241833") ?? null;
+    activeGifs.find((g) => g.slug === "chibi-15241833") ?? null;
 
   const heroMini =
     chibiItems[0] ??
-    SAMPLE_GIFS.find((g) => g.romaji === "kawaii") ??
-    SAMPLE_GIFS[0];
+    activeGifs.find((g) => g.romaji === "kawaii") ??
+    activeGifs[0];
   const heroSquare =
     chibiItems.find((g) => g.id !== heroMini.id) ??
-    SAMPLE_GIFS.find((g) => g.romaji === "kawaii") ??
-    SAMPLE_GIFS[1];
+    activeGifs.find((g) => g.romaji === "kawaii") ??
+    activeGifs[1];
   const heroSquare2 =
     explicitHero ??
     chibiItems.find((g) => g.id !== heroMini.id && g.id !== heroSquare.id) ??
-    SAMPLE_GIFS.find((g) => g.id !== heroMini.id && g.id !== heroSquare.id) ??
-    SAMPLE_GIFS[2];
+    activeGifs.find((g) => g.id !== heroMini.id && g.id !== heroSquare.id) ??
+    activeGifs[2];
 
   // Featured: bishōjo / female-character picks, all xpad-mini (landscape)
   // so the row reads as a single uniform widescreen grid.
   const FEATURED_TAGS = ["magicalgirl", "yourname", "mononoke", "spirited", "lain"];
   const featured = FEATURED_TAGS
-    .map((tag) => SAMPLE_GIFS.find((g) => g.romaji === tag))
-    .filter((g): g is (typeof SAMPLE_GIFS)[number] => Boolean(g));
-  const xpadRow = gifsByDevice("xpad-mini").slice(0, ROW_A_COUNT);
+    .map((tag) => activeGifs.find((g) => g.romaji === tag))
+    .filter((g): g is (typeof activeGifs)[number] => Boolean(g));
+  const xpadRow = activeGifs.filter((g) => g.device === "xpad-mini").slice(0, ROW_A_COUNT);
 
   return (
     <div className="space-y-28 pb-12">
@@ -136,7 +138,7 @@ export default async function DiscoverPage() {
           className="text-[clamp(1.8rem,4vw,2.6rem)] font-semibold tracking-[-0.02em]"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          {t(locale, "cta.title")}
+          {activeGifs.length}+ motions, ready to drop in.
         </h2>
         <p className="mx-auto mt-3 max-w-md text-[14px] text-[color:var(--color-ink-muted)]">
           {t(locale, "cta.subtitle")}
