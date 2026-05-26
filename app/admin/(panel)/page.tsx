@@ -1,26 +1,20 @@
 import Link from "next/link";
-import { Surface } from "@/components/glass/Surface";
+import { SAMPLE_GIFS } from "@/lib/sample-data";
+import { getRemovedIds } from "@/lib/removed-server";
 import { listUploadsServer } from "@/lib/uploads-server";
 
 export default async function AdminDashboardPage() {
-  const uploads = await listUploadsServer({ device: null, q: null });
+  const [removed, uploads] = await Promise.all([
+    getRemovedIds(),
+    listUploadsServer({ device: null, q: null })
+  ]);
 
-  const now = Date.now();
-  const dayMs = 24 * 60 * 60 * 1000;
-  const last24h = uploads.filter((u) => now - u.createdAt < dayMs).length;
-  const totalBytes = uploads.reduce((sum, u) => sum + u.fileSize, 0);
-  const avgBytes = uploads.length ? totalBytes / uploads.length : 0;
-
-  // Top uploaders (by count)
-  const byHandle = new Map<string, number>();
-  for (const u of uploads) {
-    byHandle.set(u.idHandle, (byHandle.get(u.idHandle) ?? 0) + 1);
-  }
-  const topUploaders = Array.from(byHandle.entries())
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5);
-
-  const recent = uploads.slice(0, 6);
+  const crawledTotal = SAMPLE_GIFS.length;
+  const crawledActive = crawledTotal - removed.size;
+  const crawledHidden = removed.size;
+  const uploadCount = uploads.length;
+  const totalContent = crawledActive + uploadCount;
+  const storageBytes = uploads.reduce((s, u) => s + u.fileSize, 0);
 
   return (
     <div className="space-y-10">
@@ -36,92 +30,51 @@ export default async function AdminDashboardPage() {
         </h1>
       </div>
 
+      {/* Headline total */}
+      <div
+        className="rounded-[18px] p-6"
+        style={{ background: "var(--color-bg-soft)" }}
+      >
+        <p className="text-[10.5px] uppercase tracking-[0.16em] text-[color:var(--color-ink-muted)]">
+          Total content live on site
+        </p>
+        <p
+          className="mt-1 text-[64px] font-semibold tabular-nums leading-none tracking-[-0.03em]"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          {totalContent.toLocaleString()}
+        </p>
+        <p className="mt-3 text-[12.5px] text-[color:var(--color-ink-muted)]">
+          {crawledActive.toLocaleString()} crawled · {uploadCount.toLocaleString()} user uploads
+        </p>
+      </div>
+
       <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <StatCard label="Uploads" value={uploads.length.toString()} />
-        <StatCard label="Last 24h" value={last24h.toString()} />
         <StatCard
-          label="Storage"
-          value={formatBytes(totalBytes)}
-          hint={`${formatBytes(avgBytes)} avg`}
+          label="Crawled"
+          value={`${crawledActive}`}
+          hint={`of ${crawledTotal}`}
+          href="/admin/library"
         />
-        <StatCard label="Uploaders" value={byHandle.size.toString()} />
-      </section>
-
-      <section className="grid grid-cols-1 gap-6 md:grid-cols-[2fr_1fr]">
-        <Surface variant="strong" className="p-5">
-          <div className="flex items-baseline justify-between">
-            <p className="text-[11px] uppercase tracking-[0.16em] text-[color:var(--color-ink-muted)]">
-              Recent uploads
-            </p>
-            <Link
-              href="/admin/uploads"
-              className="link-underline text-[12px] text-[color:var(--color-ink-muted)]"
-            >
-              View all
-            </Link>
-          </div>
-          {recent.length === 0 ? (
-            <p className="mt-6 text-[13px] text-[color:var(--color-ink-muted)]">
-              No uploads yet.
-            </p>
-          ) : (
-            <ul className="mt-4 divide-y" style={{ borderColor: "var(--color-line)" }}>
-              {recent.map((u) => (
-                <li
-                  key={u.id}
-                  className="flex items-center gap-3 py-2.5 text-[13px]"
-                >
-                  <Link
-                    href={u.blobUrl}
-                    target="_blank"
-                    className="block h-10 w-16 shrink-0 overflow-hidden rounded-md"
-                    style={{ background: "var(--color-bg-soft)" }}
-                  >
-                    <img
-                      src={u.blobUrl}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  </Link>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium">{u.nickname}</p>
-                    <p className="truncate text-[11px] text-[color:var(--color-ink-muted)]">
-                      {u.fileName}
-                    </p>
-                  </div>
-                  <span className="text-[11px] tabular-nums text-[color:var(--color-ink-muted)]">
-                    {formatBytes(u.fileSize)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Surface>
-
-        <Surface variant="strong" className="p-5">
-          <p className="text-[11px] uppercase tracking-[0.16em] text-[color:var(--color-ink-muted)]">
-            Top uploaders
-          </p>
-          {topUploaders.length === 0 ? (
-            <p className="mt-6 text-[13px] text-[color:var(--color-ink-muted)]">
-              —
-            </p>
-          ) : (
-            <ul className="mt-4 space-y-2 text-[13px]">
-              {topUploaders.map(([handle, n]) => (
-                <li
-                  key={handle}
-                  className="flex items-center justify-between"
-                >
-                  <span className="font-medium">{handle}</span>
-                  <span className="tabular-nums text-[color:var(--color-ink-muted)]">
-                    {n}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Surface>
+        <StatCard
+          label="Hidden"
+          value={`${crawledHidden}`}
+          hint="by admin"
+          href="/admin/library"
+        />
+        <StatCard
+          label="Uploads"
+          value={`${uploadCount}`}
+          hint={storageBytes > 0 ? formatBytes(storageBytes) : "0 B"}
+          href="/admin/uploads"
+        />
+        <StatCard
+          label="Last 24h"
+          value={`${
+            uploads.filter((u) => Date.now() - u.createdAt < 86_400_000).length
+          }`}
+          hint="new uploads"
+        />
       </section>
     </div>
   );
@@ -130,19 +83,16 @@ export default async function AdminDashboardPage() {
 function StatCard({
   label,
   value,
-  hint
+  hint,
+  href
 }: {
   label: string;
   value: string;
   hint?: string;
+  href?: string;
 }) {
-  return (
-    <div
-      className="rounded-[14px] p-4"
-      style={{
-        background: "var(--color-bg-soft)"
-      }}
-    >
+  const body = (
+    <>
       <p className="text-[10.5px] uppercase tracking-[0.12em] text-[color:var(--color-ink-muted)]">
         {label}
       </p>
@@ -157,6 +107,26 @@ function StatCard({
           {hint}
         </p>
       )}
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className="block rounded-[14px] p-4 transition-colors hover:bg-[color:var(--color-bg-raised)]"
+        style={{ background: "var(--color-bg-soft)" }}
+      >
+        {body}
+      </Link>
+    );
+  }
+  return (
+    <div
+      className="rounded-[14px] p-4"
+      style={{ background: "var(--color-bg-soft)" }}
+    >
+      {body}
     </div>
   );
 }
