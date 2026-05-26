@@ -46,8 +46,14 @@ export default function UploadPage() {
     setErrorMsg("");
 
     try {
-      if (file.size > 4 * 1024 * 1024) {
-        throw new Error("File too large for local storage (max 4 MB without a server).");
+      const MAX_BYTES = 200 * 1024; // 200 KB
+      if (file.size > MAX_BYTES) {
+        throw new Error(
+          `파일이 너무 큽니다. 최대 200 KB. (선택한 파일: ${(file.size / 1024).toFixed(1)} KB)`
+        );
+      }
+      if (!/^image\/(png|jpeg|gif)$/i.test(file.type)) {
+        throw new Error("지원 형식: JPG · PNG · GIF.");
       }
 
       const dataURL = await readFileAsDataURL(file);
@@ -142,7 +148,10 @@ export default function UploadPage() {
           Add a motion.
         </h1>
         <p className="mx-auto mt-3 max-w-md text-[14px] leading-relaxed text-[color:var(--color-ink-muted)]">
-          PNG, JPG, GIF, MP4, WebM. Sized for every supported device.
+          파일 종류: <span className="font-medium text-[color:var(--color-ink)]">JPG · PNG · GIF</span>
+          <br />
+          추천: <span className="font-medium text-[color:var(--color-ink)]">240 × 135 px</span> · 최대{" "}
+          <span className="font-medium text-[color:var(--color-ink)]">200 KB</span>
         </p>
       </div>
 
@@ -213,8 +222,16 @@ export default function UploadPage() {
                 <p className="max-w-full truncate text-[14px] font-medium tracking-tight">
                   {file.name}
                 </p>
-                <p className="mt-1 text-[12px] text-[color:var(--color-ink-muted)]">
-                  {(file.size / 1024).toFixed(1)} KB · click to replace
+                <p
+                  className="mt-1 text-[12px]"
+                  style={{
+                    color:
+                      file.size > 200 * 1024
+                        ? "var(--color-pink-deep)"
+                        : "var(--color-ink-muted)"
+                  }}
+                >
+                  {(file.size / 1024).toFixed(1)} KB · 클릭해서 교체
                 </p>
               </>
             ) : (
@@ -223,13 +240,13 @@ export default function UploadPage() {
                   Drop a file, or click to browse.
                 </p>
                 <p className="mt-1 text-[12px] text-[color:var(--color-ink-muted)]">
-                  Up to 25 MB
+                  JPG · PNG · GIF · 권장 240 × 135 px · 최대 200 KB
                 </p>
               </>
             )}
             <input
               type="file"
-              accept=".png,.jpg,.jpeg,.gif,.mp4,.webm"
+              accept=".png,.jpg,.jpeg,.gif,image/png,image/jpeg,image/gif"
               onChange={onFile}
               className="hidden"
             />
