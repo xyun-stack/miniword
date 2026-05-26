@@ -64,31 +64,18 @@ export default function UploadPage() {
       const dataURL = await readFileAsDataURL(file);
       let { width, height } = await readImageDimensions(dataURL);
       if (!width || !height) {
-        // Video files won't load via <img>. Default to landscape and let
-        // the user trust the classifier; we can wire a <video> probe later.
         width = 240;
         height = 135;
       }
 
-      const nick = nickname.trim().startsWith("@")
-        ? nickname.trim()
-        : `@${nickname.trim()}`;
-
-      add({
-        id:
-          typeof crypto !== "undefined" && "randomUUID" in crypto
-            ? crypto.randomUUID()
-            : `u_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-        nickname: nick,
+      await add({
+        file,
+        nickname: nickname.trim(),
         idHandle: id.trim(),
-        fileName: file.name,
-        fileSize: file.size,
-        fileType: file.type,
+        pw,
         width,
         height,
-        device: classifyDevice(width, height),
-        dataURL,
-        createdAt: Date.now()
+        device: classifyDevice(width, height)
       });
 
       setStatus("done");

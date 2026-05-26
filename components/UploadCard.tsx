@@ -12,6 +12,16 @@ export function UploadCard({ upload, showRemove = true }: Props) {
   const { remove } = useMyUploads();
   const device = findDevice(upload.device);
 
+  async function handleRemove() {
+    const pw = window.prompt("Password to remove this upload");
+    if (!pw) return;
+    try {
+      await remove(upload.id, pw);
+    } catch (err) {
+      window.alert(err instanceof Error ? err.message : "Delete failed");
+    }
+  }
+
   return (
     <article>
       <div className="card-hover relative">
@@ -20,7 +30,7 @@ export function UploadCard({ upload, showRemove = true }: Props) {
           style={{ aspectRatio: device.aspect }}
         >
           <img
-            src={upload.dataURL}
+            src={upload.blobUrl}
             alt={upload.nickname}
             className="h-full w-full object-cover"
             draggable={false}
@@ -30,7 +40,7 @@ export function UploadCard({ upload, showRemove = true }: Props) {
         {showRemove && (
           <button
             type="button"
-            onClick={() => remove(upload.id)}
+            onClick={handleRemove}
             aria-label="Remove upload"
             className="absolute right-2 top-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/90 text-[color:var(--color-ink-muted)] transition-colors hover:text-[color:var(--color-ink)]"
           >

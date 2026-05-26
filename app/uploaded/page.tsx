@@ -45,13 +45,13 @@ export default function UploadedPage() {
 
       <div className="mx-auto max-w-md space-y-2 text-center text-[11.5px] leading-relaxed text-[color:var(--color-ink-muted)]">
         <p>
-          Uploads are saved to your device only. They don't sync across browsers or
-          appear in other people's libraries until we add a server. Clear your
-          browser data and they're gone.
+          Uploads are stored on the miniword server. Showing entries that match the
+          ID you used on this device. Use the same ID on any device to find your
+          uploads again.
         </p>
         <p>
-          Once shared publicly, content that violates our guidelines may be
-          removed by moderators at any time without notice.
+          Content that violates our guidelines may be removed by moderators at any
+          time without notice.
         </p>
       </div>
     </div>

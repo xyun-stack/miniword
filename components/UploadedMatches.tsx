@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
-import { useMyUploads } from "@/hooks/useMyUploads";
+import { useEffect, useState } from "react";
 import { UploadCard } from "@/components/UploadCard";
+import type { Upload } from "@/hooks/useMyUploads";
 
 type Props = {
   device?: string;
@@ -10,38 +10,44 @@ type Props = {
 };
 
 /**
- * UploadedMatches — client side companion for /browse. Pulls the local
- * uploads from useMyUploads and renders any that match the current
- * device + search query, so users can find their own uploads through
- * search too. Returns null when nothing matches (no empty section).
+ * Server-backed companion for /browse. Fetches uploads from the API
+ * filtered by device + q so users can find any upload, not just their own.
+ * Returns null while loading or when there are no matches.
  */
 export function UploadedMatches({ device, q }: Props) {
-  const { items } = useMyUploads();
-  const needle = (q ?? "").trim().toLowerCase().replace(/^@/, "");
+  const [items, setItems] = useState<Upload[] | null>(null);
 
-  const matches = useMemo(() => {
-    return items.filter((u) => {
-      if (device && device !== "all" && u.device !== device) return false;
-      if (needle) {
-        const hay = `${u.nickname} ${u.fileName} ${u.idHandle}`.toLowerCase();
-        if (!hay.includes(needle)) return false;
-      }
-      return true;
-    });
-  }, [items, device, needle]);
+  useEffect(() => {
+    const sp = new URLSearchParams();
+    if (device && device !== "all") sp.set("device", device);
+    if (q && q.trim()) sp.set("q", q.trim());
+    const qs = sp.toString();
+    let cancelled = false;
+    fetch(`/api/uploads${qs ? `?${qs}` : ""}`)
+      .then((res) => (res.ok ? res.json() : { items: [] }))
+      .then((data: { items: Upload[] }) => {
+        if (!cancelled) setItems(Array.isArray(data.items) ? data.items : []);
+      })
+      .catch(() => {
+        if (!cancelled) setItems([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [device, q]);
 
-  if (matches.length === 0) return null;
+  if (!items || items.length === 0) return null;
 
   return (
     <section className="space-y-4">
       <div className="flex items-baseline justify-between">
         <p className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[color:var(--color-pink-deep)]">
           <span aria-hidden className="pink-dot" />
-          Your uploads · {matches.length}
+          Uploads · {items.length}
         </p>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6">
-        {matches.map((u) => (
+        {items.map((u) => (
           <UploadCard key={u.id} upload={u} showRemove={false} />
         ))}
       </div>
