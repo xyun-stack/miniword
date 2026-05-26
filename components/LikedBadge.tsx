@@ -18,7 +18,7 @@ export function LikedBadge() {
       className="inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[12px] font-medium tabular-nums transition-colors duration-200 ease-out"
       style={{
         background: active ? "var(--color-pink)" : "var(--color-bg-soft)",
-        color: active ? "var(--color-ink)" : "var(--color-ink-muted)"
+        color: active ? "var(--color-pink-deep)" : "var(--color-ink-muted)"
       }}
     >
       <svg
@@ -28,8 +28,8 @@ export function LikedBadge() {
         strokeLinecap="round"
         strokeLinejoin="round"
         style={{
-          fill: active ? "var(--color-ink)" : "none",
-          stroke: active ? "var(--color-ink)" : "currentColor",
+          fill: active ? "var(--color-pink-mid)" : "none",
+          stroke: active ? "var(--color-pink-mid)" : "currentColor",
           strokeWidth: active ? 0 : 1.8,
           transition: "fill 200ms ease, stroke 200ms ease"
         }}

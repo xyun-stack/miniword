@@ -18,17 +18,17 @@
   --color-line:        rgba(0, 0, 0, 0.05);
   --color-line-strong: rgba(0, 0, 0, 0.10);
 
-  /* ───── Pink — single tone (#FFEDF1) ─────
-   *  Fill-only role: button backgrounds, active pills, stamps. Never
-   *  used on text or thin strokes (it disappears on white). Pink-deep
-   *  is kept as an alias of the same hex; text accents now fall back
-   *  to ink-muted in the components themselves.
+  /* ───── Pink scale ─────
+   *  Two tones, both light:
+   *    pink     #FFEDF1  — whisper-pink fill for buttons / active pills.
+   *    pink-mid #EFB4C4  — soft visible pink for text, dots, strokes.
+   *  pink-soft / wash / deep are kept as aliases for compat.
    */
   --color-pink:        #FFEDF1;
   --color-pink-soft:   #FFEDF1;
   --color-pink-wash:   #FFEDF1;
-  --color-pink-mid:    #FFEDF1;
-  --color-pink-deep:   #FFEDF1;
+  --color-pink-mid:    #EFB4C4;
+  --color-pink-deep:   #EFB4C4;
 
   /* ───── Geometry ───── */
   --radius-sm: 10px;
@@ -76,7 +76,7 @@ body {
 
 a:focus-visible,
 button:focus-visible {
-  outline: 2px solid var(--color-ink);
+  outline: 2px solid var(--color-pink-mid);
   outline-offset: 3px;
   border-radius: 8px;
 }
@@ -242,7 +242,7 @@ button:focus-visible {
     bottom: -2px;
     height: 1.5px;
     width: 0;
-    background: var(--color-ink);
+    background: var(--color-pink-mid);
     border-radius: 999px;
     transition: width 360ms var(--ease-premium);
   }
@@ -257,7 +257,7 @@ button:focus-visible {
     width: 6px;
     height: 6px;
     border-radius: 999px;
-    background: var(--color-ink-faint);
+    background: var(--color-pink-mid);
   }
 
   /* ─── Eyebrow label ─── */
@@ -269,7 +269,7 @@ button:focus-visible {
     font-size: 11px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--color-ink-muted);
+    color: var(--color-pink-deep);
     font-weight: 600;
   }
 

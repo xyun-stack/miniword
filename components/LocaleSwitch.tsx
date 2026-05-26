@@ -100,7 +100,7 @@ export function LocaleSwitch() {
                     className="font-mono text-[10px] uppercase tracking-[0.08em]"
                     style={{
                       color: active
-                        ? "var(--color-ink)"
+                        ? "var(--color-pink-deep)"
                         : "var(--color-ink-faint)"
                     }}
                   >

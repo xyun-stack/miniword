@@ -18,7 +18,7 @@ export default function LikedPage() {
   return (
     <div className="space-y-10">
       <div className="text-center">
-        <p className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[color:var(--color-ink-muted)]">
+        <p className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[color:var(--color-pink-deep)]">
           <span aria-hidden className="pink-dot" />
           Liked
         </p>

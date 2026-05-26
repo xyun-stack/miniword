@@ -47,8 +47,8 @@ export function LikeButton({ gifId }: Props) {
         strokeLinecap="round"
         strokeLinejoin="round"
         style={{
-          fill: liked ? "var(--color-ink)" : "none",
-          stroke: liked ? "var(--color-ink)" : "var(--color-ink-faint)",
+          fill: liked ? "var(--color-pink-mid)" : "none",
+          stroke: liked ? "var(--color-pink-mid)" : "var(--color-ink-faint)",
           strokeWidth: liked ? 0 : 1.8,
           transform: bump ? "scale(1.25)" : "scale(1)",
           transition:
