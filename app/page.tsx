@@ -86,7 +86,7 @@ export default async function DiscoverPage() {
           style={{ fontFamily: "var(--font-display)" }}
         >
           {t(locale, "hero.title.pre")}
-          <span style={{ color: "var(--color-ink-muted)" }}>
+          <span style={{ color: "#EFB4C4" }}>
             {t(locale, "hero.title.accent")}
           </span>
         </h1>
