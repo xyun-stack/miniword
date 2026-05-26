@@ -11,7 +11,8 @@ import {
 export const runtime = "nodejs";
 
 const MAX_BYTES = 200 * 1024;
-const ALLOWED_MIME = /^image\/(png|jpeg|gif)$/i;
+const ALLOWED_MIME = /^image\/(png|jpe?g|gif)$/i;
+const ALLOWED_EXT = /\.(png|jpe?g|gif)$/i;
 
 /**
  * POST /api/uploads
@@ -49,9 +50,13 @@ export async function POST(req: NextRequest) {
       { status: 413 }
     );
   }
-  if (!ALLOWED_MIME.test(file.type)) {
+  const looksLikeImage =
+    ALLOWED_MIME.test(file.type) || ALLOWED_EXT.test(file.name);
+  if (!looksLikeImage) {
     return NextResponse.json(
-      { error: "Unsupported format. Use JPG, PNG, or GIF." },
+      {
+        error: `Unsupported format. Got "${file.type || "unknown"}" — use JPG, PNG, or GIF.`
+      },
       { status: 415 }
     );
   }
