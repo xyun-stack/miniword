@@ -1,0 +1,334 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Pretendard Variable", "Noto Sans JP", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter Display", "Inter", "Pretendard Variable", ui-sans-serif, sans-serif;
+
+  /* ───── Surface ───── */
+  --color-bg:         #FFFFFF;
+  --color-bg-soft:    #FAFAFA;
+  --color-bg-raised:  #F4F4F5;
+
+  /* ───── Ink ───── */
+  --color-ink:        #0A0A0B;
+  --color-ink-soft:   #2A2A2D;
+  --color-ink-muted:  #6E6E73;
+  --color-ink-faint:  #A1A1A6;
+
+  --color-line:        rgba(0, 0, 0, 0.05);
+  --color-line-strong: rgba(0, 0, 0, 0.10);
+
+  /* ───── Edge accent (Pantone 510 C) ───── */
+  --color-pink:      #EBBECB;
+  --color-pink-soft: #F5D2DD;
+  --color-pink-wash: #FBE9EF;
+  --color-pink-mid:  #C97C92;
+  --color-pink-deep: #8E4359;
+
+  /* ───── Geometry ───── */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
+
+  /* ───── Eases ───── */
+  --ease-premium:     cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-premium-out: cubic-bezier(0.45, 0, 0.55, 1);
+
+  --duration-fast: 240ms;
+  --duration-base: 380ms;
+  --duration-slow: 720ms;
+}
+
+* {
+  border-color: var(--color-line);
+}
+
+html {
+  font-variant-numeric: tabular-nums;
+}
+
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-feature-settings: "ss01", "cv11", "kern";
+  letter-spacing: -0.011em;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-ink);
+  color: var(--color-bg);
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-pink-mid);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* ──────────────────────────────────────────────── */
+/*  Flat surface system (no edge highlights, no     */
+/*  sheen, no shadows). The card is just a soft     */
+/*  raised tone on white.                           */
+/* ──────────────────────────────────────────────── */
+
+@layer components {
+  .glass {
+    position: relative;
+    background: var(--color-bg);
+    border-radius: var(--radius-lg);
+    isolation: isolate;
+  }
+
+  .glass-strong {
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-lg);
+  }
+
+  /* Edge / sheen kept as no-ops so existing class usage doesn't break. */
+  .glass-edge,
+  .glass-sheen {
+    /* intentionally empty */
+  }
+
+  /* ─── Buttons ─── */
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    background: var(--color-ink);
+    color: var(--color-bg);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.005em;
+    border: 0;
+    transition:
+      transform   var(--duration-fast) var(--ease-premium),
+      background  var(--duration-fast) var(--ease-premium);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-primary:hover {
+    background: var(--color-ink-soft);
+    transform: translateY(-1px);
+  }
+  .btn-primary:active {
+    transform: translateY(0);
+    transition-duration: 80ms;
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    background: var(--color-bg-soft);
+    color: var(--color-ink);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.005em;
+    border: 0;
+    transition:
+      transform  var(--duration-fast) var(--ease-premium),
+      background var(--duration-fast) var(--ease-premium);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-secondary:hover {
+    background: var(--color-bg-raised);
+    transform: translateY(-1px);
+  }
+  .btn-secondary:active {
+    transform: translateY(0);
+    transition-duration: 80ms;
+  }
+
+  /* ─── Filter pills ─── */
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    letter-spacing: 0.005em;
+    color: var(--color-ink-muted);
+    background: var(--color-bg-soft);
+    border: 0;
+    transition:
+      color      var(--duration-fast) var(--ease-premium),
+      background var(--duration-fast) var(--ease-premium),
+      transform  var(--duration-fast) var(--ease-premium);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .pill:hover {
+    color: var(--color-ink);
+    background: var(--color-bg-raised);
+  }
+  .pill[data-active="true"] {
+    color: var(--color-bg);
+    background: var(--color-ink);
+  }
+  .pill[data-active="true"]:hover {
+    background: var(--color-ink-soft);
+  }
+
+  /* ─── Stamp (Pick badge) ─── */
+
+  .stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--color-pink-wash);
+    color: var(--color-pink-deep);
+    border: 0;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* ─── Card hover ─── */
+
+  .card-hover {
+    transition: transform var(--duration-base) var(--ease-premium);
+    will-change: transform;
+  }
+  .card-hover img {
+    transition: transform var(--duration-slow) var(--ease-premium),
+                opacity   var(--duration-base) var(--ease-premium);
+    will-change: transform, opacity;
+  }
+  a:hover .card-hover {
+    transform: translateY(-3px);
+  }
+  a:hover .card-hover img {
+    transform: scale(1.045);
+  }
+
+  /* ─── Underline link (kept; the tiny grow line is interaction, not chrome) ─── */
+
+  .link-underline {
+    position: relative;
+    color: var(--color-ink);
+  }
+  .link-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 1.5px;
+    width: 0;
+    background: var(--color-pink-mid);
+    border-radius: 999px;
+    transition: width 360ms var(--ease-premium);
+  }
+  .link-underline:hover::after {
+    width: 100%;
+  }
+
+  /* ─── Pink dot (plain, no halo) ─── */
+
+  .pink-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--color-pink-mid);
+  }
+
+  /* ─── Eyebrow label ─── */
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-pink-deep);
+    font-weight: 600;
+  }
+  .eyebrow.muted {
+    color: var(--color-ink-muted);
+  }
+
+  /* ─── Reveal on scroll (kept; motion only, no light) ─── */
+
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 22%;
+    }
+  }
+}
+
+@keyframes reveal-in {
+  from { opacity: 0;  transform: translateY(18px); }
+  to   { opacity: 1;  transform: translateY(0); }
+}
+
+/* ──────────────────────────────────────────────── */
+/*  Procedural fallback patterns                    */
+/* ──────────────────────────────────────────────── */
+
+@layer utilities {
+  .motion-lofi {
+    background:
+      radial-gradient(120% 80% at 20% 30%, #f4c89a 0%, transparent 60%),
+      radial-gradient(120% 80% at 80% 70%, #c89576 0%, transparent 60%),
+      linear-gradient(180deg, #f1d3a8 0%, #b88560 100%);
+  }
+  .motion-neon {
+    background:
+      radial-gradient(80% 60% at 30% 30%, #ff2bd6 0%, transparent 55%),
+      radial-gradient(80% 60% at 70% 70%, #00e5ff 0%, transparent 55%),
+      linear-gradient(180deg, #14001a 0%, #001428 100%);
+  }
+  .motion-paper {
+    background: var(--color-bg-soft);
+  }
+  .motion-mono {
+    background:
+      radial-gradient(60% 40% at 50% 40%, #0a0a0b 0%, transparent 55%),
+      linear-gradient(180deg, #f5f4ef 0%, #d8d5cb 100%);
+  }
+  .motion-cool {
+    background:
+      radial-gradient(60% 40% at 50% 50%, #74e6e0 0%, transparent 60%),
+      linear-gradient(180deg, #0a232c 0%, #134e5e 100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-hover,
+  .pill,
+  .btn-primary,
+  .btn-secondary,
+  .reveal {
+    animation: none !important;
+    transition: none !important;
+  }
+}
