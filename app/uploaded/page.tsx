@@ -1,21 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { Surface } from "@/components/glass/Surface";
 import { UploadCard } from "@/components/UploadCard";
+import { ConfirmDeleteModal } from "@/components/ConfirmDeleteModal";
 import { useMyUploads } from "@/hooks/useMyUploads";
 
 export default function UploadedPage() {
   const { items, remove } = useMyUploads();
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
-  async function handleRemove(id: string) {
-    const pw = window.prompt("Password to remove this upload");
-    if (!pw) return;
-    try {
-      await remove(id, pw);
-    } catch (err) {
-      window.alert(err instanceof Error ? err.message : "Delete failed");
-    }
+  async function handleConfirmDelete(pw: string) {
+    if (!pendingDeleteId) return;
+    await remove(pendingDeleteId, pw);
+    setPendingDeleteId(null);
   }
 
   return (
@@ -51,7 +50,7 @@ export default function UploadedPage() {
             <UploadCard
               key={u.id}
               upload={u}
-              onRemove={() => handleRemove(u.id)}
+              onRemove={() => setPendingDeleteId(u.id)}
             />
           ))}
         </div>
@@ -68,6 +67,12 @@ export default function UploadedPage() {
           any time without notice.
         </p>
       </div>
+
+      <ConfirmDeleteModal
+        open={pendingDeleteId !== null}
+        onCancel={() => setPendingDeleteId(null)}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 }
